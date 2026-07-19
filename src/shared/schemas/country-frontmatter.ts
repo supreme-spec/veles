@@ -12,7 +12,7 @@ export const CountryFrontmatterSchema = z.object({
   continent: z.enum(['europe', 'asia', 'africa', 'north-america', 'south-america', 'oceania']).optional(),
   capital: z.string().optional(),
   population: z.number().int().positive().optional(),
-  faqs: z.string().optional().transform(val => 
+  faqs: z.string().optional().transform(val =>
     val ? val.split(';;').map(faq => {
       const [question, answer] = faq.split('|');
       return { question: question?.trim(), answer: answer?.trim() };
@@ -29,6 +29,10 @@ export const CountryFrontmatterSchema = z.object({
   latitude: z.number().min(-91).max(91).optional(),
   longitude: z.number().min(-181).max(181).optional(),
   wordCount: z.number().int().positive().optional(),
+  // GEO/AEO поля для ИИ-поисковиков
+  wikidataId: z.string().optional(),
+  wikipediaUrl: z.string().url().optional(),
+  directAnswer: z.string().optional(),
 });
 
 // Тип, выведенный из схемы

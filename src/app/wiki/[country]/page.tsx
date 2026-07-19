@@ -308,8 +308,9 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
       {/* TL;DR + сводная таблица (AEO/SEO: структурированный ответ для сниппетов) */}
       <section
         id="tldr"
-        className="mb-10 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl border border-blue-100 dark:border-gray-700"
+        className="direct-answer mb-10 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-3xl border border-blue-100 dark:border-gray-700"
       >
+        <div id="speakable-summary">
         <h2 className="text-2xl font-extrabold mb-3 flex items-center gap-2 !mt-0">
           <span className="text-3xl">⚡</span> Краткий ответ: {countryData?.frontmatter?.title?.split(' | ')[0] || countryNamesDictionary[country] || country}
         </h2>
@@ -368,6 +369,7 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
               )) || null}
             </tbody>
           </table>
+        </div>
         </div>
       </section>
 

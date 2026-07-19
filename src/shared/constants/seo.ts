@@ -69,9 +69,18 @@ export const SITE_LAST_UPDATED_ISO = '2026-07-15';
 export const SITE_LAST_UPDATED_DISPLAY = 'июль 2026';
 
 // Эксперт-автор для E-E-A-T (Person в схеме Article).
-// Заполните реальными данными конкретного человека (гуида/редактора).
-// Если не задано (null), в схемах используется только Organization — без выдуманных лиц.
-export const EXPERT_AUTHOR: { name: string; url: string } | null = null;
+// Реальный эксперт: Сергей Свистунов, автор finradun.ru
+export const EXPERT_AUTHOR = {
+  name: 'Сергей Свистунов',
+  role: 'Главный редактор, эксперт по международному туризму',
+  url: `${SITE_URL}/about/experts/sergey-svistunov`,
+  sameAs: [
+    'https://finradun.ru',
+    SOCIAL_LINKS.vk,
+    SOCIAL_LINKS.telegram,
+    SOCIAL_LINKS.instagram
+  ]
+} as const;
 
 // Типы для повторного использования
 export type SocialLinks = typeof SOCIAL_LINKS;
