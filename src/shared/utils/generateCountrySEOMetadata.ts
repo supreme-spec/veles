@@ -1,0 +1,643 @@
+// src/lib/seo/countrySEO.ts
+import type { Metadata } from 'next';
+import fs from 'fs';
+import path from 'path';
+import matter from 'gray-matter';
+import React, { cache } from 'react';
+import { generateEnhancedSEOMetadata, SEO_CONFIG } from '@/lib/seo/unifiedSEO';
+import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
+import { SITE_URL } from '@/shared/constants/seo';
+
+interface CountrySEOMetadataOptions {
+  countryId: string;
+  title?: string;
+  description?: string;
+  url?: string;
+  image?: string;
+  keywords?: string[];
+  faqs?: Array<{ question: string; answer: string }>;
+  includeAI?: boolean;
+  includeVideo?: boolean;
+}
+
+// Функция для извлечения FAQ из содержимого MDX
+function extractFaqsFromContent(content: string): Array<{ question: string; answer: string }> {
+  const faqs: Array<{ question: string; answer: string }> = [];
+  
+  // Паттерн для извлечения FAQ из MDX
+  // Ищем заголовки с вопросами (## или ###) и следующий за ними текст
+  const faqPattern = /#{2,3}\s*(.+\?)\s*\n+([\s\S]*?)(?=\n#{2,3}|$)/g;
+  
+  let match: RegExpExecArray | null;
+  while ((match = faqPattern.exec(content)) !== null) {
+    const question = match[1]?.trim();
+    const answer = match[2]?.trim()
+      .replace(/\n+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .substring(0, 500); // Ограничиваем длину ответа
+    
+    if (question && answer) {
+      faqs.push({ question, answer });
+    }
+  }
+  
+  // Также ищем компоненты <FAQ> или <Accordion>
+  const componentPattern = /<(?:FAQ|Accordion)[^>]*question="([^"]+)"[^>]*>\s*([\s\S]*?)\s*<\/(?:FAQ|Accordion)>/gi;
+  
+  while ((match = componentPattern.exec(content)) !== null) {
+    faqs.push({
+      question: match[1]?.trim() || '',
+      answer: match[2]?.trim().replace(/<[^>]+>/g, '').substring(0, 500) || ''
+    });
+  }
+  
+  return faqs;
+}
+
+// Приводит FAQ из frontmatter к массиву {question, answer}.
+// Поддерживает массив объектов, строку "Вопрос|Ответ;;Вопрос|Ответ"
+// и пустое значение (возвращает []).
+function normalizeFaqs(faqs: unknown): Array<{ question: string; answer: string }> {
+  if (Array.isArray(faqs)) {
+    return faqs
+      .map((item: any) => ({
+        question: typeof item?.question === 'string' ? item.question.trim() : '',
+        answer: typeof item?.answer === 'string' ? item.answer.trim() : '',
+      }))
+      .filter((f: { question: string; answer: string }) => f.question && f.answer);
+  }
+
+  if (typeof faqs === 'string' && faqs.trim()) {
+    return faqs
+      .split(';;')
+      .map((pair: string) => {
+        const parts = pair.split('|');
+        return {
+          question: parts[0]?.trim() || '',
+          answer: parts[1]?.trim() || '',
+        };
+      })
+      .filter((f: { question: string; answer: string }) => f.question && f.answer);
+  }
+
+  return [];
+}
+
+function getCountryGeoData(countryId: string, frontmatter: any) {
+  const fallback = COUNTRY_COORDINATES[countryId] || {
+    latitude: 55.7558, // Москва как дефолт для RU сайта
+    longitude: 37.6173,
+    countryCode: 'RU'
+  };
+  
+  return {
+    latitude: frontmatter?.latitude || fallback.latitude,
+    longitude: frontmatter?.longitude || fallback.longitude,
+    countryCode: frontmatter?.countryCode || fallback.countryCode
+  };
+}
+
+// Функция для получения данных из MDX файла страны
+interface MdxData {
+  frontmatter: any;
+  content: string;
+}
+
+export const getCountryMdxData = cache(async (countryId: string): Promise<MdxData | null> => {
+  try {
+    // Валидация countryId для безопасности
+    if (!/^[a-z0-9-]+$/.test(countryId)) {
+      console.error(`Invalid countryId: ${countryId}`);
+      return null;
+    }
+    
+    const filePath = path.join(process.cwd(), 'src/content/countries', `${countryId}.mdx`);
+    
+    // Проверяем существование файла более безопасным способом
+    try {
+      const stats = await fs.promises.stat(filePath);
+      if (!stats.isFile()) {
+        console.warn(`MDX file not found or not a file: ${countryId}`);
+        return null;
+      }
+    } catch {
+      console.warn(`MDX file not found: ${countryId}`);
+      return null;
+    }
+    
+    const fileContent = await fs.promises.readFile(filePath, 'utf8');
+    const { data: frontmatter, content } = matter(fileContent);
+
+    // Нормализуем FAQ из frontmatter: допускается как массив, так и строка
+    // формата "Вопрос|Ответ;;Вопрос|Ответ" (YAML block scalar `>-`).
+    const normalizedFaqs = normalizeFaqs(frontmatter.faqs);
+
+    // Извлекаем FAQ из контента, если нет в frontmatter
+    const extractedFaqs = normalizedFaqs.length
+      ? normalizedFaqs
+      : extractFaqsFromContent(content);
+    
+    // Добавляем геоданные из карты координат
+    const geoData = getCountryGeoData(countryId, frontmatter);
+    
+    return {
+      frontmatter: {
+        ...frontmatter,
+        faqs: extractedFaqs,
+        latitude: geoData.latitude,
+        longitude: geoData.longitude,
+        countryCode: geoData.countryCode
+      },
+      content
+    };
+  } catch (error) {
+    console.error(`Error reading MDX file for ${countryId}:`, error);
+    return null;
+  }
+});
+
+// Функция для генерации расширенных SEO метаданных для стран на основе MDX
+export async function generateCountrySEOMetadata(options: CountrySEOMetadataOptions): Promise<Metadata> {
+  const { countryId, title, description, url, image, keywords, faqs } = options;
+
+  // Получаем данные из MDX файла
+  const mdxData = await getCountryMdxData(countryId);
+
+  const countryName = mdxData?.frontmatter.title?.replace(/\d{4}/g, '').trim() || countryId;
+  
+  // Используем данные из MDX, если они есть, иначе используем переданные параметры
+  const mdxTitle = mdxData?.frontmatter.title || title;
+  const mdxDescription = mdxData?.frontmatter.description || description;
+  const mdxImage = mdxData?.frontmatter.image || image;
+  
+  // Обработка ключевых слов - поддержка как строки, так и массива
+  let mdxKeywords: string[] = [];
+  if (mdxData?.frontmatter.keywords) {
+    if (Array.isArray(mdxData.frontmatter.keywords)) {
+      mdxKeywords = mdxData.frontmatter.keywords;
+    } else if (typeof mdxData.frontmatter.keywords === 'string') {
+      mdxKeywords = mdxData.frontmatter.keywords.split(',').map((k: string) => k.trim());
+    }
+  } else {
+    mdxKeywords = keywords || [];
+  }
+  
+  // Используем FAQ из параметров, frontmatter или пустой массив
+  const extractedFaqs = faqs || mdxData?.frontmatter.faqs || [];
+  
+  // Генерируем вариативный title, чтобы избежать шаблонного "Country Year — ..."
+  const year = new Date().getFullYear();
+  const titleVariants = [
+    `${mdxTitle} — путеводитель ${year}`,
+    `Путеводитель по ${countryName}: ${mdxTitle}`,
+    `${countryName} ${year}: ${mdxTitle}`,
+    `${mdxTitle} | ${year}`,
+    `Все о ${countryName}: ${mdxTitle}`,
+  ];
+  const hash = countryId.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
+  const chosenTitle = titleVariants[Math.abs(hash) % titleVariants.length] || mdxTitle;
+
+  // Генерируем полные SEO данные через unifiedSEO
+  const seoMetadata = generateEnhancedSEOMetadata({
+    title: chosenTitle,
+    description: mdxDescription || `Подробный путеводитель по ${countryName}`,
+    url: url || `${SITE_URL}/wiki/${countryId}`,
+    image: mdxImage,
+    type: 'article',
+    keywords: mdxKeywords,
+    publishedTime: mdxData?.frontmatter.datePublished !== 'dynamic' ? mdxData?.frontmatter.datePublished : new Date().toISOString(),
+    modifiedTime: mdxData?.frontmatter.dateModified !== 'dynamic' ? mdxData?.frontmatter.dateModified : new Date().toISOString(),
+    author: mdxData?.frontmatter.author || SEO_CONFIG.organization,
+    faqs: extractedFaqs
+  });
+
+  return seoMetadata;
+}
+
+// Функция для генерации JSON-LD схем для стран на основе MDX
+export async function generateCountrySchemas(countryId: string, mode: 'google' | 'voice' | 'ai' | 'safe-all' = 'safe-all') {
+  const mdxData = await getCountryMdxData(countryId);
+  
+  if (!mdxData) {
+    // Возвращаем базовые схемы, если нет MDX данных
+    return [];
+  }
+
+  const countryName = mdxData.frontmatter.title?.replace(/\d{4}/g, '').trim() || countryId;
+  const baseUrl = SITE_URL;
+  const countryUrl = `${baseUrl}/wiki/${countryId}`;
+  const geoData = getCountryGeoData(countryId, mdxData.frontmatter);
+
+  // Core schemas (always safe for Google/Yandex)
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "@id": `${countryUrl}#article`,
+    "headline": mdxData.frontmatter.title || `${countryName} - путеводитель`,
+    "description": mdxData.frontmatter.description || `Подробный путеводитель по ${countryName}`,
+    "image": {
+      "@type": "ImageObject",
+      "url": mdxData.frontmatter.image || `${baseUrl}/images/logo.png`,
+      "caption": `${countryName} - Путеводитель Велес Вояж`
+    },
+    "datePublished": mdxData.frontmatter.datePublished !== 'dynamic' ? mdxData.frontmatter.datePublished : new Date().toISOString().split('T')[0],
+    "dateModified": mdxData.frontmatter.dateModified !== 'dynamic' ? mdxData.frontmatter.dateModified : new Date().toISOString().split('T')[0],
+    "author": {
+      "@type": "Organization",
+      "@id": `${baseUrl}#organization`,
+      "name": mdxData.frontmatter.author || "Велес Вояж | Экспертная редакция"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${baseUrl}#organization`,
+      "name": "Велес Вояж | Экспертная редакция",
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${baseUrl}/images/logo.png`,
+        "caption": "Логотип Велес Вояж"
+      }
+    },
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": countryUrl
+    },
+    "articleSection": `Путеводитель по ${countryName}`,
+    "about": {
+      "@type": "Place",
+      "name": countryName
+    },
+    "keywords": Array.isArray(mdxData.frontmatter.keywords) 
+      ? mdxData.frontmatter.keywords 
+      : (typeof mdxData.frontmatter.keywords === 'string' 
+        ? mdxData.frontmatter.keywords.split(',').map((k: string) => k.trim()) 
+        : [`путеводитель по ${countryName}`, `${countryName}`, `туризм в ${countryName}`]),
+    "wordCount": mdxData.frontmatter.wordCount || 8000,
+    "inLanguage": mdxData.frontmatter.inLanguage || "ru-RU",
+    "temporalCoverage": new Date().getFullYear().toString(),
+    "contentReferenceTime": mdxData.frontmatter.datePublished !== 'dynamic' ? mdxData.frontmatter.datePublished : new Date().toISOString().split('T')[0]
+  };
+
+  const organizationSchema = {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    "@id": `${baseUrl}#organization`,
+    "name": "Велес Вояж | Экспертная редакция",
+    "alternateName": "Veles Voyage",
+    "url": baseUrl,
+    "logo": {
+      "@type": "ImageObject",
+      "url": `${baseUrl}/images/logo.png`
+    },
+    "foundingDate": "2023",
+    "contactPoint": {
+      "@type": "ContactPoint",
+      "telephone": "+7-985-063-51-34",
+      "contactType": "customer service",
+      "email": "hello@veles-voyage.ru",
+      "availableLanguage": ["Russian"]
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Керамиков пр-т, д. 103",
+      "addressLocality": "Голицыно",
+      "addressRegion": "Московская область",
+      "postalCode": "143041",
+      "addressCountry": "RU"
+    },
+    "sameAs": [
+      "https://vk.com/veles__voyage",
+      "https://t.me/veles_voyage",
+      "https://rutube.ru/u/velesvoyage/"
+    ]
+  };
+
+  const breadcrumbsSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "@id": `${countryUrl}#breadcrumb`,
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Главная",
+        "item": baseUrl
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Энциклопедия",
+        "item": `${baseUrl}/wiki/`
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": countryName,
+        "item": countryUrl
+      }
+    ]
+  };
+
+  // FAQ схема (валидная для Google) - только если есть FAQ
+  const faqItems = Array.isArray(mdxData?.frontmatter.faqs)
+    ? mdxData.frontmatter.faqs
+    : [];
+
+  const faqSchema = faqItems.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${countryUrl}#faq`,
+    "mainEntity": faqItems.slice(0, 10).map((faq: { question: string; answer: string }) => ({
+      "@type": "Question",
+      "name": faq.question,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.answer
+      }
+    }))
+  } : null;
+
+  const touristDestinationSchema = {
+    "@context": "https://schema.org",
+    "@type": "TouristDestination",
+    "@id": `${countryUrl}#destination`,
+    "name": countryName,
+    "description": mdxData?.frontmatter.description || `Путеводитель по ${countryName}`,
+    "url": countryUrl,
+    "containsPlace": [
+      {
+        "@type": "AdministrativeArea",
+        "name": countryName
+      }
+    ],
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": geoData.latitude,
+      "longitude": geoData.longitude
+    },
+    "address": {
+      "@type": "PostalAddress",
+      "addressCountry": geoData.countryCode
+    },
+    "touristType": [
+      { "@type": "Audience", "audienceType": "Туристы" },
+      { "@type": "Audience", "audienceType": "Семьи с детьми" },
+      { "@type": "Audience", "audienceType": "Молодожёны" },
+      { "@type": "Audience", "audienceType": "Бэкпекеры" }
+    ],
+    "hasMap": `https://www.google.com/maps/search/${encodeURIComponent(countryName)}`
+  };
+
+  // Voice/Assistant schemas
+  const speakableSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${countryUrl}#speakable`,
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "cssSelector": [
+        "article > h1",
+        "article > p:first-of-type",
+        ".article-title",
+        ".article-intro",
+        ".summary",
+        ".faq-question",
+        ".faq-answer"
+      ]
+    },
+    "name": mdxData?.frontmatter.title || `${countryName} - путеводитель`
+  };
+
+  const howToSchema = {
+    "@context": "https://schema.org",
+    "@type": "HowTo",
+    "@id": `${countryUrl}#howto`,
+    "name": `Как спланировать поездку в ${countryName}`,
+    "description": `Пошаговое руководство по планированию путешествия в ${countryName}`,
+    "totalTime": "P7D",
+    "estimatedCost": {
+      "@type": "MonetaryAmount",
+      "currency": "RUB",
+      "value": mdxData?.frontmatter.estimatedCost || "100000"
+    },
+    "step": [
+      {
+        "@type": "HowToStep",
+        "position": 1,
+        "name": "Проверьте визовые требования",
+        "text": `Узнайте, нужна ли виза для посещения ${countryName}. Проверьте сроки действия паспорта.`
+      },
+      {
+        "@type": "HowToStep",
+        "position": 2,
+        "name": "Выберите даты и сезон",
+        "text": `Определите лучшее время для посещения ${countryName} с учётом погоды и туристического сезона.`
+      },
+      {
+        "@type": "HowToStep",
+        "position": 3,
+        "name": "Забронируйте билеты",
+        "text": "Найдите и забронируйте авиабилеты заранее для лучших цен."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 4,
+        "name": "Забронируйте жильё",
+        "text": "Выберите отель, апартаменты или другой тип размещения."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 5,
+        "name": "Оформите страховку",
+        "text": "Приобретите медицинскую страховку с покрытием не менее 30 000 евро."
+      },
+      {
+        "@type": "HowToStep",
+        "position": 6,
+        "name": "Составьте маршрут",
+        "text": `Спланируйте посещение достопримечательностей ${countryName}.`
+      }
+    ],
+    "supply": [
+      { "@type": "HowToSupply", "name": "Загранпаспорт" },
+      { "@type": "HowToSupply", "name": "Банковская карта" },
+      { "@type": "HowToSupply", "name": "Медицинская страховка" }
+    ]
+  };
+
+  // VideoObject schema (when video is available)
+  const videoSchema = mdxData?.frontmatter.video ? {
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    "@id": `${countryUrl}#video`,
+    "name": `${countryName} - Видеогид | Велес Вояж`,
+    "description": mdxData.frontmatter.description || `Видеообзор ${countryName}`,
+    "thumbnailUrl": mdxData.frontmatter.image || `${baseUrl}/images/logo.png`,
+    "uploadDate": mdxData.frontmatter.datePublished !== 'dynamic' ? mdxData.frontmatter.datePublished : new Date().toISOString().split('T')[0],
+    "duration": mdxData.frontmatter.videoDuration || "PT10M",
+    "contentUrl": mdxData.frontmatter.videoUrl || `https://rutube.ru/u/velesvoyage/`,
+    "embedUrl": mdxData.frontmatter.videoEmbed,
+    "publisher": {
+      "@type": "Organization",
+      "@id": `${baseUrl}#organization`
+    }
+  } : null;
+
+  // AI/LLM schemas
+  const datasetSchema = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${countryUrl}#dataset`,
+    "name": `Туристические данные: ${countryName}`,
+    "description": `Структурированные данные о туризме в ${countryName}`,
+    "url": countryUrl,
+    "license": "https://creativecommons.org/licenses/by/4.0/",
+    "creator": {
+      "@type": "Organization",
+      "@id": `${baseUrl}#organization`
+    },
+    "dateCreated": mdxData.frontmatter.datePublished !== 'dynamic' ? mdxData.frontmatter.datePublished : new Date().toISOString().split('T')[0],
+    "dateModified": mdxData.frontmatter.dateModified !== 'dynamic' ? mdxData.frontmatter.dateModified : new Date().toISOString().split('T')[0],
+    "inLanguage": "ru",
+    "keywords": Array.isArray(mdxData.frontmatter.keywords) 
+      ? mdxData.frontmatter.keywords 
+      : [`туризм`, `путешествия`, countryName],
+    "isAccessibleForFree": true
+  };
+
+  const definedTermSetSchema = {
+    "@context": "https://schema.org",
+    "@type": "DefinedTermSet",
+    "@id": `${countryUrl}#terms`,
+    "name": `Туристические термины: ${countryName}`,
+    "hasDefinedTerm": (Array.isArray(mdxData.frontmatter.keywords) 
+      ? mdxData.frontmatter.keywords 
+      : [`туризм`, `путешествия`, countryName]
+    ).slice(0, 10).map((term: string) => ({
+      "@type": "DefinedTerm",
+      "name": term
+    }))
+  };
+
+  // TravelAction schema for improved travel search indexing
+  const travelActionSchema = {
+    "@context": "https://schema.org",
+    "@type": "TravelAction",
+    "@id": `${countryUrl}#travel`,
+    "name": `Путешествие в ${countryName}`,
+    "description": `Планирование поездки в ${countryName}`,
+    "toLocation": {
+      "@type": "Place",
+      "@id": `${countryUrl}#destination`
+    },
+    "provider": {
+      "@type": "Organization",
+      "@id": `${baseUrl}#organization`
+    }
+  };
+
+  // ItemList schema for popular attractions
+  const attractionsListSchema = mdxData?.frontmatter.attractions ? {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "@id": `${countryUrl}#attractions`,
+    "name": `Достопримечательности ${countryName}`,
+    "numberOfItems": Array.isArray(mdxData.frontmatter.attractions) ? mdxData.frontmatter.attractions.length : 0,
+    "itemListElement": Array.isArray(mdxData.frontmatter.attractions) ? 
+      mdxData.frontmatter.attractions.map((item: any, index: number) => ({
+        "@type": "ListItem",
+        "position": index + 1,
+        "item": {
+          "@type": item.type || "TouristAttraction",
+          "name": item.name,
+          "description": item.description,
+          "url": item.url
+        }
+      })) : []
+  } : null;
+
+  // Experimental schemas
+  const webSiteSchema = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "@id": `${baseUrl}#website`,
+    "name": `${countryName} | Велес Вояж`,
+    "url": baseUrl,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${baseUrl}/search?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    }
+  };
+
+  // Define schema groups
+  const coreSchemas = [
+    articleSchema,
+    faqSchema,
+    breadcrumbsSchema,
+    organizationSchema,
+    touristDestinationSchema,
+    videoSchema,
+    travelActionSchema
+  ].filter(Boolean);
+
+  const voiceSchemas = [
+    speakableSchema,
+    howToSchema
+  ].filter(Boolean);
+
+  const aiSchemas = [
+    datasetSchema,
+    definedTermSetSchema
+  ].filter(Boolean);
+
+  const experimentalSchemas = [
+    webSiteSchema,
+    attractionsListSchema
+  ].filter(Boolean);
+
+  // Return schemas based on mode
+  switch (mode) {
+    case 'google':
+      return coreSchemas;
+    
+    case 'voice':
+      return [...coreSchemas, ...voiceSchemas];
+    
+    case 'ai':
+      return [...coreSchemas, ...aiSchemas];
+    
+    case 'safe-all':
+    default:
+      return [...coreSchemas, ...voiceSchemas, ...aiSchemas, ...experimentalSchemas];
+  }
+}
+
+// Экспорт компонента для рендеринга схем
+export function CountrySchemaScripts({ schemas }: { schemas: object[] }) {
+  if (!schemas.length) return null;
+  
+  // Создаем массив элементов скриптов
+  const scriptElements = [];
+  for (let i = 0; i < schemas.length; i++) {
+    const schema = schemas[i];
+    // Безопасная сериализация JSON для предотвращения XSS
+    const jsonStr = JSON.stringify(schema);
+    // Экранируем потенциально опасные символы
+    const safeJson = jsonStr
+      .replace(/</g, '\u003c')
+      .replace(/>/g, '\u003e');
+    
+    scriptElements.push(
+      React.createElement("script", {
+        key: `schema-${i}`,
+        type: "application/ld+json",
+        dangerouslySetInnerHTML: { __html: safeJson }
+      })
+    );
+  }
+  
+  return React.createElement(React.Fragment, null, ...scriptElements);
+}

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<yml_catalog date="2025-08-15 12:00">
+<shop>
+    <name>Велес Вояж</name>
+<company>Велес Вояж</company>
+    <url>https://veles-voyage.ru</url>
+    <currencies>
+        <currency id="RUB" rate="1"/>
+        <currency id="USD" rate="90"/>
+        <currency id="EUR" rate="100"/>
+        <currency id="TON" rate="5"/>
+    </currencies>
+    <categories>
+        <category id="1">Энциклопедия стран</category>
+        <category id="2">Туристические направления</category>
+        <category id="3">Советы путешественникам</category>
+        <category id="4">Web3 туризм</category>
+    </categories>
+    <offers>
+        <offer id="1" available="true">
+            <url>https://veles-voyage.ru/wiki</url>
+            <price>0</price>
+            <currencyId>RUB</currencyId>
+            <categoryId>1</categoryId>
+            <name>Энциклопедия путешествий</name>
+            <description>Полная энциклопедия стран мира с подробными описаниями</description>
+        </offer>
+        <offer id="2" available="true">
+            <url>https://veles-voyage.ru/web3</url>
+            <price>0</price>
+            <currencyId>TON</currencyId>
+            <categoryId>4</categoryId>
+            <name>Web3 туризм</name>
+            <description>Путешествия с поддержкой блокчейна и криптовалют</description>
+        </offer>
+    </offers>
+</shop>
+</yml_catalog>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OpenSearchDescription xmlns="http://a9.com/-/spec/opensearch/1.1/">
+  <ShortName>Велес Вояж</ShortName>
+  <Description>Поиск по турагентству Велес Вояж - профессиональная организация путешествий по России и миру</Description>
+  <InputEncoding>UTF-8</InputEncoding>
+  <Image width="16" height="16" type="image/x-icon">https://veles-voyage.ru/favicon.ico</Image>
+  <Url type="text/html" template="https://veles-voyage.ru/wiki/search?q={searchTerms}"/>
+  <Url type="application/x-suggestions+json" template="https://veles-voyage.ru/api/suggestions?q={searchTerms}"/>
+</OpenSearchDescription>

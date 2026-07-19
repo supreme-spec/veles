@@ -1,0 +1,45 @@
+{
+  "crons": [
+    {
+      "path": "/api/indexnow",
+      "schedule": "0 3 * * *"
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/index-en.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/flights-en.html",
+      "destination": "/flights",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    },
+    {
+      "source": "/tours-en.html",
+      "destination": "/tours",
+      "permanent": true
+    },
+    {
+      "source": "/cruises-en.html",
+      "destination": "/cruises",
+      "permanent": true
+    },
+    {
+      "source": "/about-en.html",
+      "destination": "/about",
+      "permanent": true
+    },
+    {
+      "source": "/contacts-en.html",
+      "destination": "/contacts",
+      "permanent": true
+    }
+  ]
+}

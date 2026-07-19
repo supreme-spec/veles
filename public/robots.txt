@@ -1,0 +1,113 @@
+# robots.txt для Велес Вояж
+# Турагентство: индивидуальные туры и путешествия
+
+User-agent: *
+Allow: /
+Allow: /wiki/
+Allow: /tours/
+Allow: /cruises/
+Allow: /blog/
+Allow: /countries/
+Allow: /cities/
+Allow: /places/
+
+# Запрет индексации служебных директорий
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /__tests__/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /docs/
+
+# Запрет индексации служебных файлов
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /manifest.json
+Disallow: /ai.txt
+Disallow: /yandex-catalog.xml
+Disallow: /search.xml
+
+# Sitemap (индекс с динамическими sitemap для всех стран и городов)
+Sitemap: https://www.veles-voyage.ru/api/sitemap-index
+
+# Crawl-delay (не требуется для современных поисковиков)
+# Crawl-delay: 1
+
+# Яндекс.Вебмастер
+User-agent: Yandex
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /__tests__/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /docs/
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /manifest.json
+Disallow: /ai.txt
+Disallow: /yandex-catalog.xml
+Disallow: /search.xml
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&utm_referrer&ref&yclid&openstat&_ga&_gid&_fbc&_fbp&gclid&fbclid
+
+# Googlebot
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /__tests__/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /docs/
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /manifest.json
+Disallow: /ai.txt
+Disallow: /yandex-catalog.xml
+Disallow: /search.xml
+
+# Другие боты
+User-agent: Bingbot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /__tests__/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /docs/
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /manifest.json
+Disallow: /ai.txt
+Disallow: /yandex-catalog.xml
+Disallow: /search.xml
+
+User-agent: DuckDuckBot
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /_next/
+Disallow: /static/
+Disallow: /__tests__/
+Disallow: /.git/
+Disallow: /node_modules/
+Disallow: /docs/
+Disallow: /*.json$
+Disallow: /sw.js
+Disallow: /service-worker.js
+Disallow: /manifest.json
+Disallow: /ai.txt
+Disallow: /yandex-catalog.xml
+Disallow: /search.xml
