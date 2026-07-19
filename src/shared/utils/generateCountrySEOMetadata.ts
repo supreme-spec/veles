@@ -158,15 +158,15 @@ export const getCountryMdxData = cache(async (countryId: string): Promise<MdxDat
 
 // Функция для генерации расширенных SEO метаданных для стран на основе MDX
 export async function generateCountrySEOMetadata(options: CountrySEOMetadataOptions): Promise<Metadata> {
-  const { countryId, title, description, url, image, keywords, faqs } = options;
+  const { countryId, description, url, image, keywords, faqs } = options;
 
   // Получаем данные из MDX файла
   const mdxData = await getCountryMdxData(countryId);
 
-  const countryName = mdxData?.frontmatter.title?.replace(/\d{4}/g, '').trim() || countryId;
+  // Извлекаем название страны из title или используем countryId
+  const countryName = countryId.charAt(0).toUpperCase() + countryId.slice(1);
   
   // Используем данные из MDX, если они есть, иначе используем переданные параметры
-  const mdxTitle = mdxData?.frontmatter.title || title;
   const mdxDescription = mdxData?.frontmatter.description || description;
   const mdxImage = mdxData?.frontmatter.image || image;
   
@@ -185,23 +185,19 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
   // Используем FAQ из параметров, frontmatter или пустой массив
   const extractedFaqs = faqs || mdxData?.frontmatter.faqs || [];
   
-  // Генерируем вариативный title, чтобы избежать шаблонного "Country Year — ..."
+  // Если в frontmatter есть кастомный title - используем его полностью
+  // Иначе генерируем чистый title без дублирования
   const year = new Date().getFullYear();
-  const titleVariants = [
-    `${mdxTitle} — путеводитель ${year}`,
-    `Путеводитель по ${countryName}: ${mdxTitle}`,
-    `${countryName} ${year}: ${mdxTitle}`,
-    `${mdxTitle} | ${year}`,
-    `Все о ${countryName}: ${mdxTitle}`,
-  ];
-  const hash = countryId.split('').reduce((acc: number, char: string) => acc + char.charCodeAt(0), 0);
-  const chosenTitle = titleVariants[Math.abs(hash) % titleVariants.length] || mdxTitle;
+  const chosenTitle = mdxData?.frontmatter.title && !mdxData?.frontmatter.title.includes('Путеводитель')
+    ? mdxData.frontmatter.title
+    : `${countryName} ${year}: Путеводитель | Велес Вояж`;
 
   // Генерируем полные SEO данные через unifiedSEO
+  const canonicalUrl = url || `${SITE_URL}/wiki/${countryId}`;
   const seoMetadata = generateEnhancedSEOMetadata({
     title: chosenTitle,
     description: mdxDescription || `Подробный путеводитель по ${countryName}`,
-    url: url || `${SITE_URL}/wiki/${countryId}`,
+    url: canonicalUrl,
     image: mdxImage,
     type: 'article',
     keywords: mdxKeywords,

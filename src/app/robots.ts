@@ -13,6 +13,7 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/',
           '/_next/',
           '/static/',
+          '/*-gid', // Block old legacy slugs with -gid suffix
         ],
       },
       // Specific rules for search engines
@@ -36,6 +37,7 @@ export default function robots(): MetadataRoute.Robots {
           '/admin/',
           '/_next/',
           '/static/',
+          '/*-gid', // Block old legacy slugs with -gid suffix
         ],
       },
       // Retrieval-боты ИИ (разрешаем для цитирования в реальном времени)
