@@ -4,6 +4,27 @@ import { generateCitySlug } from '@/lib/slugify';
 import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
 import { allCities } from '@/app/cities/all-cities';
 
+// Whitelist для ИИ-ботов (GEO/AEO optimization)
+const AI_BOT_WHITELIST = [
+  'GPTBot',
+  'ChatGPT-User',
+  'ClaudeBot',
+  'Claude-User',
+  'Claude-SearchBot',
+  'Claude-Web',
+  'Google-Extended',
+  'PerplexityBot',
+  'Perplexity-User',
+  'OAI-SearchBot',
+  'Amazonbot',
+  'FacebookBot',
+  'Applebot',
+  'Applebot-Extended',
+  'cohere-ai',
+  'anthropic-ai',
+  'Bytespider'
+];
+
 const LEGACY_SLUG_MAP: Record<string, string> = {
   'abkhaziya-gid': 'abkhazia',
   'niderlandy-gid': 'netherlands',
@@ -58,6 +79,15 @@ const WIKI_STATIC = new Set([
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const userAgent = request.headers.get('user-agent') || '';
+
+  // Whitelist для ИИ-ботов - разрешаем доступ без rate limiting
+  const isAIBot = AI_BOT_WHITELIST.some((bot: string) => userAgent.includes(bot));
+  if (isAIBot) {
+    const response = NextResponse.next();
+    response.headers.set('X-AI-Bot-Allowed', 'true');
+    return response;
+  }
 
   if (pathname.startsWith('/wiki/')) {
     const slug = pathname.replace('/wiki/', '').split('/')[0];

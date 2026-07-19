@@ -1,10 +1,10 @@
 import type { MetadataRoute } from 'next';
 import { allCities } from './all-cities';
-import { SITE_LAST_UPDATED } from '@/shared/data/siteMeta';
 import { SITE_URL } from '@/shared/constants/seo';
 import { generateCitySlug } from '@/lib/slugify';
 
 const siteUrl = SITE_URL;
+const currentDate: Date = new Date();
 
 const uniqueCities = Array.from(new Set(allCities.map(generateCitySlug))).sort();
 
@@ -63,8 +63,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     const isHighPriority = HIGH_PRIORITY_CITIES.has(slug);
     return {
       url: `${siteUrl}/cities/${slug}`,
-      lastModified: SITE_LAST_UPDATED,
-      changeFrequency: isHighPriority ? 'weekly' : 'monthly',
+      lastModified: currentDate,
+      changeFrequency: isHighPriority ? 'daily' : 'weekly',
       priority: isHighPriority ? 0.8 : 0.5,
     };
   });
@@ -72,7 +72,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     {
       url: `${siteUrl}/cities`,
-      lastModified: SITE_LAST_UPDATED,
+      lastModified: currentDate,
       changeFrequency: 'daily',
       priority: 1.0,
     },

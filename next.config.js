@@ -5,6 +5,26 @@ const nextConfig = {
   experimental: {
     typedRoutes: true,
   },
+  // Fix ChunkLoadError with automatic reload
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.output.publicPath = '/_next/static/';
+      config.optimization.splitChunks = {
+        ...config.optimization.splitChunks,
+        chunks: 'all',
+        cacheGroups: {
+          default: false,
+          vendors: false,
+          commons: {
+            name: 'commons',
+            chunks: 'all',
+            minChunks: 2,
+          },
+        },
+      };
+    }
+    return config;
+  },
   images: {
     remotePatterns: [
       {

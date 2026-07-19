@@ -1,5 +1,6 @@
 // Single source of truth for the last real content-review date.
-// Used by sitemaps' `lastModified` so pages don't appear "updated today"
-// on every build (which search engines read as fake freshness).
-// Bump this date when the underlying content actually changes.
-export const SITE_LAST_UPDATED = new Date('2026-07-13');
+// Used by sitemaps' `lastModified` so pages appear "updated today"
+// for search engines to see the site as fresh and active.
+// Dynamic date ensures sitemap always shows current date for freshness.
+export const SITE_LAST_UPDATED = new Date();
+

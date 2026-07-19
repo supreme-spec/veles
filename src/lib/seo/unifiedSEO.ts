@@ -322,7 +322,8 @@ export function generateOrganizationSchema(): object {
     "sameAs": [
       SEO_CONFIG.social.vk,
       SEO_CONFIG.social.telegram,
-      SEO_CONFIG.social.rutube
+      SEO_CONFIG.social.rutube,
+      "https://github.com/veles-voyage"
     ],
     "priceRange": SEO_CONFIG.priceRange,
     "areaServed": { "@type": "Country", "name": "Russia" }
@@ -370,6 +371,17 @@ export function generatePlaceSchema(data: {
   }
 
   return schema;
+}
+
+/**
+ * Generate SpeakableSpecification for voice search (AEO)
+ */
+export function generateSpeakableSchema(cssSelectors: string[] = [".voice-snippet", ".faq-answer", ".article-summary"]): object {
+  return {
+    "@context": "https://schema.org",
+    "@type": "SpeakableSpecification",
+    "cssSelector": cssSelectors
+  };
 }
 
 // ============================================
