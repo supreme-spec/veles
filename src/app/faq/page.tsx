@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
 import { generateMetadata as generateSEOMetadata } from '@/shared/utils/generateMetadata';
-import StructuredData from '@/components/SEO/StructuredData';
+import { SchemaScripts } from '@/components/SchemaScripts';
 import { FAQSection } from '@/components/FAQSection';
 import { SITE_URL } from '@/shared/constants/seo';
 import { faqItems } from '@/shared/data/faqItems';
@@ -42,7 +42,7 @@ export const metadata: Metadata = generateSEOMetadata({
 const FaqPage = () => {
   return (
     <article>
-      <StructuredData schemas={[faqSchema]} />
+      <SchemaScripts schemas={[faqSchema]} />
 
       <div className="container mx-auto px-4 py-8 pt-20 md:pt-24">
         <nav className="flex mb-6 text-sm text-gray-600 dark:text-gray-400" aria-label="Breadcrumb">

@@ -452,6 +452,24 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
         </div>
       </div>
 
+      {/* Связанные страны для Internal Linking */}
+      {countryData?.frontmatter?.relatedCountries && countryData.frontmatter.relatedCountries.length > 0 && (
+        <div className="mt-8 p-6 bg-gradient-to-r from-green-50 to-emerald-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-green-100 dark:border-gray-700">
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">🌍 Похожие страны</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {countryData.frontmatter.relatedCountries.map((relatedCountry: string) => (
+              <Link
+                key={relatedCountry}
+                href={`/wiki/${relatedCountry.toLowerCase()}`}
+                className="px-4 py-3 bg-white dark:bg-gray-700 rounded-lg border border-gray-200 dark:border-gray-600 text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-green-400 hover:shadow-md transition text-center"
+              >
+                {relatedCountry}
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="mt-12 pt-8 border-t border-gray-200">
         <Link
           href="/wiki/countries"

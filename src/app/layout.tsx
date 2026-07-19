@@ -252,6 +252,26 @@ const globalSchema = {
         'Управление капиталом'
       ]
     },
+    {
+      '@type': 'Person',
+      '@id': `${siteUrl}#person/kolesnikova`,
+      'name': 'Колесникова Анастасия Юрьевна',
+      'jobTitle': 'Директор, эксперт по туризму',
+      'image': `${siteUrl}/images/kolesnikova.webp`,
+      'sameAs': [
+        'https://franglish-original.ru',
+        SOCIAL_LINKS.vk,
+        SOCIAL_LINKS.telegram,
+        `${siteUrl}/about#team`
+      ],
+      'worksFor': { '@id': `${siteUrl}#organization` },
+      'knowsAbout': [
+        'Международный туризм',
+        'Организация туров',
+        'Визовая поддержка',
+        'Круизные путешествия'
+      ]
+    },
   ],
 };
 

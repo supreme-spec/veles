@@ -2,7 +2,7 @@ import Image from 'next/image';
 import type { Metadata } from 'next';
 import ContactForm from '@/components/ContactForm';
 import { TelegramButton } from '@/components/TelegramButton';
-import StructuredData from '@/components/SEO/StructuredData';
+import { SchemaScripts } from '@/components/SchemaScripts';
 import { generateMetadata as generateSEOMetadata } from '@/shared/utils/generateMetadata';
 import { SITE_URL } from '@/shared/constants/seo';
 
@@ -285,7 +285,7 @@ export default function ContactsPage() {
             <div className="flex justify-center">
               <TelegramButton />
             </div>
-            <StructuredData schemas={[
+            <SchemaScripts schemas={[
               contactSchema,
               {
                 "@context": "https://schema.org",
