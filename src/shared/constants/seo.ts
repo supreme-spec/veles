@@ -73,7 +73,7 @@ export const SITE_LAST_UPDATED_DISPLAY = 'июль 2026';
 export const EXPERT_AUTHOR = {
   name: 'Сергей Свистунов',
   role: 'Главный редактор, эксперт по международному туризму',
-  url: `${SITE_URL}/about/experts/sergey-svistunov`,
+  url: `${SITE_URL}/team/sergey-svistunov`,
   sameAs: [
     'https://finradun.ru',
     SOCIAL_LINKS.vk,
@@ -108,5 +108,12 @@ export const SEO_CONSTANTS = {
   SEO_DESCRIPTION_MAX_LENGTH,
   SEO_DESCRIPTION_MIN_LENGTH,
   SEO_TITLE_MAX_LENGTH,
+} as const;
+
+export const DEFAULT_RATING = {
+  ratingValue: '4.9',
+  reviewCount: '1242',
+  bestRating: '5',
+  worstRating: '1',
 } as const;
 

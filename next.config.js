@@ -5,6 +5,7 @@ const nextConfig = {
   optimizeFonts: true,
   experimental: {
     typedRoutes: true,
+    optimizePackageImports: ['framer-motion', 'lucide-react', 'leaflet', 'mapbox-gl', 'react-leaflet'],
   },
   // Force canonical URL with www
   async redirects() {

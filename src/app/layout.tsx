@@ -139,13 +139,6 @@ const globalSchema = {
           closes: '16:00',
         },
       ],
-      aggregateRating: {
-        '@type': 'AggregateRating',
-        ratingValue: '4.9',
-        reviewCount: '500',
-        bestRating: '5',
-        worstRating: '1',
-      },
       hasOfferCatalog: {
         '@type': 'OfferCatalog',
         name: 'Туристические услуги',

@@ -27,7 +27,8 @@ import {
   DEFAULT_LOCALE,
   PRICE_RANGE,
   FOUNDING_YEAR,
-  EXPERT_AUTHOR
+  EXPERT_AUTHOR,
+  DEFAULT_RATING
 } from '@/shared/constants/seo';
 
 // ============================================
@@ -193,10 +194,27 @@ export const getCurrentDates = safeCache(() => {
 /**
  * Generate Article Schema
  */
-export function generateArticleSchema(data: ArticleSchemaData): object {
+export function generateArticleSchema(data: ArticleSchemaData & { wikidataId?: string; mentions?: Array<{ name: string; wikidataId: string }> }): object {
   const optimizedDescription = generateDescription(data.description, 160);
   const optimizedKeywords = generateKeywords(data.keywords);
-  
+
+  const sameAs: string[] = [];
+  if (data.wikidataId) {
+    sameAs.push(`https://www.wikidata.org/wiki/${data.wikidataId}`);
+  }
+
+  const mentions = data.mentions?.map(m => ({
+    "@type": "Thing",
+    "name": m.name,
+    "sameAs": `https://www.wikidata.org/wiki/${m.wikidataId}`
+  }));
+
+  const hasPart = data.mentions?.map(m => ({
+    "@type": "Thing",
+    "name": m.name,
+    "sameAs": `https://www.wikidata.org/wiki/${m.wikidataId}`
+  }));
+
   return {
     "@context": "https://schema.org",
     "@type": "Article",
@@ -239,7 +257,10 @@ export function generateArticleSchema(data: ArticleSchemaData): object {
     "wordCount": data.wordCount || 5000,
     "inLanguage": "ru-RU",
     "temporalCoverage": "2026",
-    "contentReferenceTime": data.datePublished
+    "contentReferenceTime": data.datePublished,
+    ...(sameAs.length > 0 && { sameAs }),
+    ...(mentions && mentions.length > 0 && { mentions }),
+    ...(hasPart && hasPart.length > 0 && { hasPart })
   };
 }
 
@@ -608,9 +629,20 @@ export function generatePageBreadcrumbs(pathname: string, currentEntityName: str
 // ============================================
 
 /**
- * Generate Person schema for expert authors (E-E-A-T)
- * Used for YMYL content like travel/visas where real expert authority is required
+ * Generate AggregateRating Schema (E-E-A-T)
+ * Use this instead of hardcoded rating values across the codebase
  */
+export function generateAggregateRatingSchema(overrides?: Partial<typeof DEFAULT_RATING>): object {
+  const rating = { ...DEFAULT_RATING, ...overrides };
+  return {
+    "@type": "AggregateRating",
+    "ratingValue": rating.ratingValue,
+    "reviewCount": rating.reviewCount,
+    "bestRating": rating.bestRating,
+    "worstRating": rating.worstRating,
+  };
+}
+
 export function generatePersonSchema(person: {
   name: string;
   jobTitle: string;

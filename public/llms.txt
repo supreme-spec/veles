@@ -39,6 +39,7 @@ Data provided by Veles Voyage (veles-voyage.ru)
 - **FAQ API:** https://veles-voyage.ru/api/wiki/faqs
 - **Knowledge Graph:** https://veles-voyage.ru/api/knowledge-graph
 - **Places API:** https://veles-voyage.ru/api/wiki/places
+- **Destinations Structured JSON:** https://veles-voyage.ru/api/destinations-structured.json
 
 ### Structured Data Schema
 Each country page contains JSON-LD with:
