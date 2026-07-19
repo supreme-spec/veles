@@ -400,7 +400,7 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         "@id": `${fullUrl}#speakable`,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": ["article > h1", "article > p:first-of-type", "#speakable-summary"]
+          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
         },
         "name": options.title
       });
@@ -478,7 +478,7 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         "@id": `${fullUrl}#speakable`,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": ["article > h1", "article > p:first-of-type", "#speakable-summary"]
+          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
         },
         "name": options.title
       });
@@ -534,7 +534,7 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         "@id": `${fullUrl}#speakable`,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": [".speakable-summary", "article > h1", "article > p:first-of-type"]
+          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
         },
         "name": options.title
       });

@@ -2,6 +2,7 @@
 const nextConfig = {
   reactStrictMode: true,
   pageExtensions: ['js', 'jsx', 'ts', 'tsx'],
+  optimizeFonts: true,
   experimental: {
     typedRoutes: true,
   },

@@ -88,7 +88,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: 'anthropic-ai',
-        disallow: '/',
+        allow: '/',
       },
       {
         userAgent: 'Bytespider',
