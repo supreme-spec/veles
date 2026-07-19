@@ -6,8 +6,8 @@ import { getWikiPages } from '@/shared/data/wikiPages-mdx';
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
   if (!wikiPages) return [];
-  return wikiPages.map((page: any) => ({
-    country: page.slug,
+  return Object.values(wikiPages).map((page: any) => ({
+    country: page.id,
   }));
 }
 
@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const wikiPages = await getWikiPages();
   if (!wikiPages) return { title: 'Страница не найдена' };
   
-  const countryData = wikiPages.find((p: any) => p.slug === country);
+  const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
     return {
@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
     };
   }
 
-  const countryName = countryData.frontmatter.title.split('—')[0].trim();
-  const bestTime = countryData.frontmatter.bestTimeToVisit || 'круглый год';
+  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
+  const bestTime = countryData?.description || 'круглый год';
 
   return generateSEOMetadata({
     title: `Погода в ${countryName} по месяцам 2026 | Велес Вояж`,
@@ -48,15 +48,15 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
   const wikiPages = await getWikiPages();
   if (!wikiPages) return notFound();
   
-  const countryData = wikiPages.find((p: any) => p.slug === country);
+  const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
     notFound();
   }
 
-  const countryName = countryData.frontmatter.title.split('—')[0].trim();
-  const bestTime = countryData.frontmatter.bestTimeToVisit || 'круглый год';
-  const seasons = countryData.frontmatter.seasons || {};
+  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
+  const bestTime = countryData?.description || 'круглый год';
+  const seasons = {};
 
   return (
     <div className="container mx-auto px-4 py-8 pt-20 md:pt-24 max-w-4xl">

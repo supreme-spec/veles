@@ -6,8 +6,8 @@ import { getWikiPages } from '@/shared/data/wikiPages-mdx';
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
   if (!wikiPages) return [];
-  return wikiPages.map((page: any) => ({
-    country: page.slug,
+  return Object.values(wikiPages).map((page: any) => ({
+    country: page.id,
   }));
 }
 
@@ -15,8 +15,8 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const { country } = await params;
   const wikiPages = await getWikiPages();
   if (!wikiPages) return { title: 'Страница не найдена' };
-  
-  const countryData = wikiPages.find((p: any) => p.slug === country);
+
+  const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
     return {
@@ -24,8 +24,8 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
     };
   }
 
-  const countryName = countryData.frontmatter.title.split('—')[0].trim();
-  const currency = countryData.frontmatter.currency || 'местная валюта';
+  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
+  const currency = countryData?.description || 'местная валюта';
 
   return generateSEOMetadata({
     title: `Валюта ${countryName}, курс к рублю 2026 | Велес Вояж`,
@@ -49,14 +49,14 @@ export default async function CurrencyPage({ params }: { params: Promise<{ count
   const wikiPages = await getWikiPages();
   if (!wikiPages) return notFound();
   
-  const countryData = wikiPages.find((p: any) => p.slug === country);
+  const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
     notFound();
   }
 
-  const countryName = countryData.frontmatter.title.split('—')[0].trim();
-  const currency = countryData.frontmatter.currency || 'местная валюта';
+  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
+  const currency = countryData?.description || 'местная валюта';
 
   return (
     <div className="container mx-auto px-4 py-8 pt-20 md:pt-24 max-w-4xl">
