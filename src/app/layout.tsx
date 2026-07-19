@@ -341,6 +341,19 @@ export default function RootLayout({
     <html lang="ru" suppressHydrationWarning>
       <head>
         {/* Все верификации теперь в metadata объекте */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              // Handle ChunkLoadError - automatically reload page
+              window.addEventListener('error', function(e) {
+                if (e.message && e.message.includes('ChunkLoadError')) {
+                  console.log('ChunkLoadError detected, reloading page...');
+                  window.location.reload();
+                }
+              });
+            `,
+          }}
+        />
       </head>
       <body className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-gray-800">
         <AuthProvider>

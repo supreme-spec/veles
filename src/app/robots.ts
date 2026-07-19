@@ -75,10 +75,10 @@ export default function robots(): MetadataRoute.Robots {
         userAgent: 'Perplexity-User',
         allow: '/',
       },
-      // Обучающие боты ИИ (блокируем - не отдаем контент в датасеты)
+      // Обучающие боты ИИ (разрешаем для GEO/AEO)
       {
         userAgent: 'GPTBot',
-        disallow: '/',
+        allow: '/',
       },
       {
         userAgent: 'CCBot',
@@ -94,7 +94,7 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: 'Amazonbot',
-        disallow: '/',
+        allow: '/',
       },
       {
         userAgent: 'FacebookBot',
@@ -102,6 +102,10 @@ export default function robots(): MetadataRoute.Robots {
       },
       {
         userAgent: 'Applebot',
+        allow: '/',
+      },
+      {
+        userAgent: 'Applebot-Extended',
         allow: '/',
       },
       {
