@@ -1,5 +1,6 @@
 import React from 'react';
 import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { AuthProvider } from '@/features/auth/context/AuthContext.simple';
 import ClientProviders from './ClientProviders';
@@ -16,6 +17,14 @@ import { WebVitals } from '@/components/analytics/WebVitals';
 import { AiSearchAssistant } from '@/shared/components/ui/AiSearchAssistant';
 import { SITE_URL } from '@/shared/constants/seo';
 import { SOCIAL_LINKS } from '@/shared/constants/seo';
+
+// Optimized font loading for Core Web Vitals (LCP/CLS)
+const mainFont = Inter({
+  subsets: ['cyrillic', 'latin'],
+  display: 'swap',
+  preload: true,
+  variable: '--font-main',
+});
 
 const siteUrl = SITE_URL;
 
@@ -213,13 +222,35 @@ const globalSchema = {
         'h2',
         'h3',
         '.speakable-summary',
+        '.direct-answer',
       ],
       xpath: [
         '//h1',
         '//h2',
         '//h3',
         '//*[contains(@class, "speakable-summary")]',
+        '//*[contains(@class, "direct-answer")]',
       ],
+    },
+    {
+      '@type': 'Person',
+      '@id': `${siteUrl}#person/svistunov`,
+      'name': 'Свистунов Сергей Григорьевич',
+      'jobTitle': 'Генеральный директор, финансовый советник',
+      'image': `${siteUrl}/images/svistunov.webp`,
+      'sameAs': [
+        'https://finradun.ru',
+        SOCIAL_LINKS.vk,
+        SOCIAL_LINKS.telegram,
+        `${siteUrl}/about#team`
+      ],
+      'worksFor': { '@id': `${siteUrl}#organization` },
+      'knowsAbout': [
+        'Финансовое консультирование',
+        'Инвестиции',
+        'Международный туризм',
+        'Управление капиталом'
+      ]
     },
   ],
 };
@@ -338,7 +369,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ru" suppressHydrationWarning>
+    <html lang="ru" className={mainFont.variable} suppressHydrationWarning>
       <head>
         {/* Все верификации теперь в metadata объекте */}
         <script

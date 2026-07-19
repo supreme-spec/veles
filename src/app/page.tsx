@@ -393,7 +393,7 @@ export default function Home() {
             <div className="text-center mb-12 animate-fade-in-up">
               <h2 className="text-3xl md:text-4xl font-extrabold mb-4">
                 <span className="text-gradient-animated drop-shadow-md">
-                  Популярные направления 2026
+                  Куда поехать в 2026 году: популярные направления и цены
                 </span>
               </h2>
               <p className="text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto text-balance">
@@ -416,8 +416,8 @@ export default function Home() {
                           className="w-full h-full"
                         />
                       </div>
-                      <h3>{dest.name}</h3>
-                      <p className="flex-1">{dest.description}</p>
+                      <h3>Сколько стоит тур в {dest.name} и нужна ли виза?</h3>
+                      <p className="speakable-summary flex-1">{dest.description}</p>
                       <Link
                         href={`/wiki/${dest.slug}`}
                         className="more-link"

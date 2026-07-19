@@ -604,6 +604,35 @@ export function generatePageBreadcrumbs(pathname: string, currentEntityName: str
 }
 
 // ============================================
+// PERSON SCHEMA GENERATION (E-E-A-T)
+// ============================================
+
+/**
+ * Generate Person schema for expert authors (E-E-A-T)
+ * Used for YMYL content like travel/visas where real expert authority is required
+ */
+export function generatePersonSchema(person: {
+  name: string;
+  jobTitle: string;
+  image: string;
+  sameAs: string[];
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": person.name,
+    "jobTitle": person.jobTitle,
+    "image": person.image,
+    "sameAs": person.sameAs,
+    "worksFor": {
+      "@type": "Organization",
+      "name": SEO_CONFIG.organization,
+      "@id": `${SEO_CONFIG.siteUrl}#organization`
+    }
+  };
+}
+
+// ============================================
 // DEPRECATED EXPORTS FOR BACKWARD COMPATIBILITY
 // ============================================
 
