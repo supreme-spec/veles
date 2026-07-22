@@ -399,4 +399,14 @@ export const DEPARTURE_CITIES_DATA: Record<string, any> = {
     flightTimes: { turkey: '5', egypt: '6', uae: '5.5', thailand: '9' },
     prices: { turkey: '46 000', egypt: '59 000', uae: '71 000', thailand: '83 000' }
   },
+  'дагестан': {
+    airport: 'Махачкала (MCX)',
+    flightTimes: { turkey: '3', egypt: '4', uae: '4', thailand: '9' },
+    prices: { turkey: '39 000', egypt: '50 000', uae: '60 000', thailand: '76 000' }
+  },
+  'лиски': {
+    airport: 'Воронеж (VOZ)',
+    flightTimes: { turkey: '4', egypt: '5', uae: '4.5', thailand: '9' },
+    prices: { turkey: '41 000', egypt: '52 000', uae: '62 000', thailand: '78 000' }
+  },
 };

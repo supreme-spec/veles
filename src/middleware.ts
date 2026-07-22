@@ -128,9 +128,16 @@ export function middleware(request: NextRequest) {
   if (pathname.startsWith('/cities/')) {
     const segments = pathname.split('/');
     const citySeg = segments[2];
-    if (citySeg && /[а-яА-ЯёЁ]/.test(citySeg)) {
-      segments[2] = generateCitySlug(decodeURIComponent(citySeg));
-      return NextResponse.redirect(new URL(segments.join('/'), request.url), 301);
+    if (citySeg) {
+      const canonical = LEGACY_SLUG_MAP[citySeg as keyof typeof LEGACY_SLUG_MAP];
+      if (canonical) {
+        segments[2] = canonical;
+        return NextResponse.redirect(new URL(segments.join('/'), request.url), 301);
+      }
+      if (/[а-яА-ЯёЁ]/.test(citySeg)) {
+        segments[2] = generateCitySlug(decodeURIComponent(citySeg));
+        return NextResponse.redirect(new URL(segments.join('/'), request.url), 301);
+      }
     }
   }
 

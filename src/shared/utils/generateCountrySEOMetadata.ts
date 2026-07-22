@@ -4,7 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import React, { cache } from 'react';
-import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
+import { countryNamesDictionary, COUNTRY_NAMES_ACCUSATIVE } from '@/shared/data/country-names-dictionary';
 import { generateEnhancedSEOMetadata, SEO_CONFIG } from '@/lib/seo/unifiedSEO';
 import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
 import { SITE_URL } from '@/shared/constants/seo';
@@ -166,6 +166,7 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
 
   // Извлекаем название страны из title или используем countryId
   const countryName = countryNamesDictionary[countryId] || countryId.charAt(0).toUpperCase() + countryId.slice(1);
+  const countryNameAccusative = COUNTRY_NAMES_ACCUSATIVE[countryId] || countryName;
   
   // Используем данные из MDX, если они есть, иначе используем переданные параметры
   const mdxDescription = mdxData?.frontmatter.description || description;
@@ -187,11 +188,15 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
   const extractedFaqs = faqs || mdxData?.frontmatter.faqs || [];
   
   // Если в frontmatter есть кастомный title - используем его полностью
-  // Иначе генерируем чистый title без дублирования
+  // Иначе генерируем чистый title без дублирования, используя винительный падеж
   const year = new Date().getFullYear();
-  const chosenTitle = mdxData?.frontmatter.title
-    ? `${mdxData.frontmatter.title.replace(/\d{4}/g, '').trim()} ${year} | Велес Вояж`
-    : `${countryName} ${year}: Путеводитель | Велес Вояж`;
+  const rawTitle = mdxData?.frontmatter.title
+    ? mdxData.frontmatter.title.replace(/\d{4}/g, '').trim()
+    : '';
+  const baseTitle = rawTitle.replace(/\s*\|\s*Велес\s+Вояж\s*$/i, '').trim();
+  const chosenTitle = baseTitle
+    ? `${baseTitle} ${year} | Велес Вояж`
+    : `${countryNameAccusative} ${year}: Путеводитель | Велес Вояж`;
 
   // Генерируем полные SEO данные через unifiedSEO
   const canonicalUrl = url || `${SITE_URL}/wiki/${countryId}`;
