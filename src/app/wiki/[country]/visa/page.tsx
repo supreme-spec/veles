@@ -7,6 +7,7 @@ import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
 import { SchemaScripts } from '@/components/SchemaScripts';
 import { getCountryMdxData } from '@/shared/utils/generateCountrySEOMetadata';
 import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
+import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
 
 const VISA_FAQS_REQUIRED = [
   {
@@ -102,6 +103,7 @@ export default async function VisaPage({ params }: { params: Promise<{ country: 
   const mdxData = await getCountryMdxData(country);
   const visaRequired = mdxData?.frontmatter?.visaRequirements ?? true;
   const faqs = visaRequired ? VISA_FAQS_REQUIRED : VISA_FAQS_NOT_REQUIRED;
+  const coords = COUNTRY_COORDINATES[country] || { latitude: 0, longitude: 0, countryCode: '' };
 
   const schemas = [
     ...(await generateUniversalSchemas({
@@ -114,6 +116,11 @@ export default async function VisaPage({ params }: { params: Promise<{ country: 
         `виза ${countryName} для россиян`,
         `безвиз ${countryName}`,
       ],
+      geo: {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        countryCode: coords.countryCode,
+      },
     })),
     ...(generateBreadcrumbSchema([
       { name: 'Главная', item: '/' },

@@ -69,6 +69,16 @@ const nextConfig = {
         destination: '/wiki/lugansk',
         permanent: true,
       },
+      {
+        source: '/wiki/czech/:path*',
+        destination: '/wiki/czechia/:path*',
+        permanent: true,
+      },
+      {
+        source: '/wiki/czech',
+        destination: '/wiki/czechia',
+        permanent: true,
+      },
     ];
   },
   // Fix ChunkLoadError with automatic reload

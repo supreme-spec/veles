@@ -5,6 +5,7 @@ import { getWikiPages } from '@/shared/data/wikiPages-mdx';
 import { generateUniversalSchemas, generateBreadcrumbSchema } from '@/lib/seo/universalSEO';
 import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
 import { SchemaScripts } from '@/components/SchemaScripts';
+import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
 
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
@@ -59,6 +60,7 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
   const countryName = countryData?.title?.split('—')[0]?.trim() || country;
   const bestTime = countryData?.description || 'круглый год';
   const seasons = {};
+  const coords = COUNTRY_COORDINATES[country] || { latitude: 0, longitude: 0, countryCode: '' };
 
   const weatherFaqs = [
     {
@@ -90,6 +92,11 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
         `климат ${countryName}`,
         `температура ${countryName}`,
       ],
+      geo: {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        countryCode: coords.countryCode,
+      },
     })),
     ...(generateBreadcrumbSchema([
       { name: 'Главная', item: '/' },
@@ -221,6 +228,27 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
           </Link>
         </div>
       </div>
+
+      <aside className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-blue-100 dark:border-gray-700 p-6 mb-12" aria-label="Источники и ссылки">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">🔗 Полезные ссылки</h3>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a href={`https://ru.wikipedia.org/wiki/${encodeURIComponent(countryName)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Wikipedia: {countryName}
+            </a>
+          </li>
+          <li>
+            <a href={`https://www.google.com/maps/search/${encodeURIComponent(countryName)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Google Maps: {countryName}
+            </a>
+          </li>
+          <li>
+            <a href={`https://www.accuweather.com/ru/${country}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              AccuWeather: Прогноз погоды
+            </a>
+          </li>
+        </ul>
+      </aside>
 
       <section id="faq" className="scroll-mt-28 mb-12" aria-labelledby="faq-heading">
         <h2 id="faq-heading" className="text-3xl font-extrabold mb-8 flex items-center gap-3 !mt-0">

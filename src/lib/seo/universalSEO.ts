@@ -36,7 +36,7 @@ export interface UniversalSEOOptions {
   };
 
   // Дополнительные данные
-  geo?: { latitude: number; longitude: number };
+  geo?: { latitude: number; longitude: number; countryCode?: string };
   faqs?: Array<{ question: string; answer: string }>;
   publishedTime?: string;
   modifiedTime?: string;

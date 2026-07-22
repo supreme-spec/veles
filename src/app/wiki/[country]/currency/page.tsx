@@ -5,6 +5,7 @@ import { generateUniversalMetadata, generateUniversalSchemas, generateBreadcrumb
 import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
 import { SchemaScripts } from '@/components/SchemaScripts';
 import { getCountryMdxData } from '@/shared/utils/generateCountrySEOMetadata';
+import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
 
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
@@ -82,6 +83,7 @@ export default async function CurrencyPage({ params }: { params: Promise<{ count
   const mdxData = await getCountryMdxData(country);
   const currency = mdxData?.frontmatter?.currency || 'местная валюта';
   const faqs = getCurrencyFaqs(countryName);
+  const coords = COUNTRY_COORDINATES[country] || { latitude: 0, longitude: 0, countryCode: '' };
 
   const schemas = [
     ...(await generateUniversalSchemas({
@@ -94,6 +96,11 @@ export default async function CurrencyPage({ params }: { params: Promise<{ count
         `курс ${countryName} к рублю`,
         `деньги ${countryName}`,
       ],
+      geo: {
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        countryCode: coords.countryCode,
+      },
     })),
     ...(generateBreadcrumbSchema([
       { name: 'Главная', item: '/' },
