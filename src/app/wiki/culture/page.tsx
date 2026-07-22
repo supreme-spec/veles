@@ -209,7 +209,7 @@ export default function CulturePage() {
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-indigo-400/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                       </Link>
                       <Link
-                        href="/wiki/ispaniya-gid"
+                        href="/wiki/spain"
                         prefetch={false}
                         className="group relative inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium no-underline overflow-hidden transition-all duration-300 hover:scale-105 active:scale-95"
                         style={{
