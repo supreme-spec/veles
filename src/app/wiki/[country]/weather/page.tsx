@@ -2,6 +2,9 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { generateMetadata as generateSEOMetadata } from '@/shared/utils/generateMetadata';
 import { getWikiPages } from '@/shared/data/wikiPages-mdx';
+import { generateUniversalSchemas, generateBreadcrumbSchema } from '@/lib/seo/universalSEO';
+import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
+import { SchemaScripts } from '@/components/SchemaScripts';
 
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
@@ -25,11 +28,10 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   }
 
   const countryName = countryData?.title?.split('—')[0]?.trim() || country;
-  const bestTime = countryData?.description || 'круглый год';
 
   return generateSEOMetadata({
-    title: `Погода в ${countryName} по месяцам 2026 | Велес Вояж`,
-    description: `Климат ${countryName}, температура по месяцам, лучшее время для посещения (${bestTime}). Сезонность, осадки, рекомендации для туристов.`,
+    title: `Погода в ${countryName} 2026 | Велес Вояж`,
+    description: `Климат ${countryName}, температура по месяцам, лучшее время для посещения. Сезонность и рекомендации.`,
     url: `/wiki/${country}/weather`,
     type: 'article',
     keywords: [
@@ -58,9 +60,56 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
   const bestTime = countryData?.description || 'круглый год';
   const seasons = {};
 
+  const weatherFaqs = [
+    {
+      question: `Какое лучшее время для поездки в ${countryName}?`,
+      answer: `Оптимальное время для поездки в ${countryName}: ${bestTime}. Рекомендуем учитывать сезонные особенности и погодные условия при планировании.`
+    },
+    {
+      question: 'Какая погода в разные сезоны?',
+      answer: 'Климат меняется в зависимости от сезона. Рекомендуем проверять прогноз погоды перед выездом и брать одежду для разных погодных условий.'
+    },
+    {
+      question: 'Нужно ли учитывать климат при планировании?',
+      answer: 'Да, климатические особенности важны для комфортного путешествия. Учитывайте сезонные осадки, температурные режимы и местные особенности.'
+    },
+    {
+      question: 'Как защититься от солнца и осадков?',
+      answer: 'В летний период используйте солнцезащитный крем и головной убор. В сезон дождей имейте зонт или водонепроницаемую одежду.'
+    }
+  ];
+
+  const schemas = [
+    ...(await generateUniversalSchemas({
+      title: `Погода в ${countryName} 2026 | Велес Вояж`,
+      description: `Климат ${countryName}, температура по месяцам, лучшее время для посещения. Сезонность и рекомендации.`,
+      url: `/wiki/${country}/weather`,
+      type: 'article',
+      keywords: [
+        `погода в ${countryName}`,
+        `климат ${countryName}`,
+        `температура ${countryName}`,
+      ],
+    })),
+    ...(generateBreadcrumbSchema([
+      { name: 'Главная', item: '/' },
+      { name: 'Энциклопедия', item: '/wiki' },
+      { name: countryName, item: `/wiki/${country}` },
+      { name: 'Погода', item: `/wiki/${country}/weather` },
+    ]) ? [generateBreadcrumbSchema([
+      { name: 'Главная', item: '/' },
+      { name: 'Энциклопедия', item: '/wiki' },
+      { name: countryName, item: `/wiki/${country}` },
+      { name: 'Погода', item: `/wiki/${country}/weather` },
+    ])] : []),
+    generateFAQSchema(weatherFaqs),
+  ].filter((schema): schema is object => schema !== null);
+
   return (
     <div className="container mx-auto px-4 py-8 pt-20 md:pt-24 max-w-4xl">
-      <nav className="text-sm text-gray-600 dark:text-gray-400 mb-6">
+      <SchemaScripts schemas={schemas} />
+
+      <nav className="text-sm text-gray-600 dark:text-gray-400 mb-6" aria-label="Breadcrumb">
         <ol className="inline-flex items-center space-x-1 md:space-x-2">
           <li>
             <Link href="/" className="hover:text-blue-600">Главная</Link>
@@ -172,6 +221,44 @@ export default async function WeatherPage({ params }: { params: Promise<{ countr
           </Link>
         </div>
       </div>
+
+      <section id="faq" className="scroll-mt-28 mb-12" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" className="text-3xl font-extrabold mb-8 flex items-center gap-3 !mt-0">
+          <span className="text-4xl">❓</span> Часто задаваемые вопросы
+        </h2>
+        <div className="space-y-4">
+          {weatherFaqs.map((faq: { question: string; answer: string }, idx: number) => (
+            <div key={idx} className="p-4 bg-white dark:bg-gray-800/40 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-lg">
+              <div className="font-bold text-lg mb-2 text-gray-900 dark:text-white flex items-center gap-2">
+                <span className="w-6 h-6 flex items-center justify-center bg-blue-100 dark:bg-blue-900/30 text-blue-600 rounded-full text-xs">Q</span>
+                {faq.question}
+              </div>
+              <div className="text-gray-600 dark:text-gray-400 pl-8 text-sm">{faq.answer}</div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <aside className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-800 rounded-2xl border border-blue-100 dark:border-gray-700 p-6" aria-label="Источники и ссылки">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">🔗 Полезные ссылки</h3>
+        <ul className="space-y-2 text-sm">
+          <li>
+            <a href={`https://ru.wikipedia.org/wiki/${encodeURIComponent(countryName)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Wikipedia: {countryName}
+            </a>
+          </li>
+          <li>
+            <a href={`https://www.google.com/maps/search/${encodeURIComponent(countryName)}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Google Maps: {countryName}
+            </a>
+          </li>
+          <li>
+            <a href={`https://www.timeanddate.com/weather/${encodeURIComponent(countryData?.id || '')}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+              Погода в {countryName} (TimeandDate)
+            </a>
+          </li>
+        </ul>
+      </aside>
     </div>
   );
 }

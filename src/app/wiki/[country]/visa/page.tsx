@@ -71,8 +71,8 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const countryName = countryNamesDictionary[country] || rawName;
 
   return generateUniversalMetadata({
-    title: `Виза в ${countryName} для россиян 2026 | Велес Вояж`,
-    description: `Нужна ли виза в ${countryName} для россиян в 2026 году? Требования, документы, сроки оформления, стоимость и порядок получения визы в ${countryName}.`,
+    title: `Виза в ${countryName} 2026 | Велес Вояж`,
+    description: `Нужна ли виза в ${countryName} для россиян? Требования, документы, сроки оформления, стоимость.`,
     url: `/wiki/${country}/visa`,
     type: 'article',
     keywords: [
@@ -105,8 +105,8 @@ export default async function VisaPage({ params }: { params: Promise<{ country: 
 
   const schemas = [
     ...(await generateUniversalSchemas({
-      title: `Виза в ${countryName} для россиян 2026 | Велес Вояж`,
-      description: `Нужна ли виза в ${countryName} для россиян в 2026 году? Требования, документы, сроки оформления, стоимость и порядок получения визы в ${countryName}.`,
+      title: `Виза в ${countryName} 2026 | Велес Вояж`,
+      description: `Нужна ли виза в ${countryName} для россиян? Требования, документы, сроки оформления, стоимость.`,
       url: `/wiki/${country}/visa`,
       type: 'article',
       keywords: [

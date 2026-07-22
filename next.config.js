@@ -49,6 +49,26 @@ const nextConfig = {
         destination: '/wiki/places',
         permanent: true,
       },
+      {
+        source: '/wiki/bolgariya/:path*',
+        destination: '/wiki/bulgaria/:path*',
+        permanent: true,
+      },
+      {
+        source: '/wiki/bolgariya',
+        destination: '/wiki/bulgaria',
+        permanent: true,
+      },
+      {
+        source: '/wiki/luhansk/:path*',
+        destination: '/wiki/lugansk/:path*',
+        permanent: true,
+      },
+      {
+        source: '/wiki/luhansk',
+        destination: '/wiki/lugansk',
+        permanent: true,
+      },
     ];
   },
   // Fix ChunkLoadError with automatic reload

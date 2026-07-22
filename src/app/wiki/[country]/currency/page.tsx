@@ -4,6 +4,7 @@ import { getWikiPages } from '@/shared/data/wikiPages-mdx';
 import { generateUniversalMetadata, generateUniversalSchemas, generateBreadcrumbSchema } from '@/lib/seo/universalSEO';
 import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
 import { SchemaScripts } from '@/components/SchemaScripts';
+import { getCountryMdxData } from '@/shared/utils/generateCountrySEOMetadata';
 
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
@@ -27,11 +28,12 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   }
 
   const countryName = countryData?.title?.split('—')[0]?.trim() || country;
-  const currency = 'местная валюта';
+  const mdxData = await getCountryMdxData(country);
+  const currency = mdxData?.frontmatter?.currency || 'местная валюта';
 
   return generateUniversalMetadata({
-    title: `Валюта ${countryName}, курс к рублю 2026 | Велес Вояж`,
-    description: `Национальная валюта ${countryName} - ${currency}. Курс к рублю, где обменять, использование карт, чаевые и финансовые советы для туристов.`,
+    title: `Валюта ${countryName} 2026 | Велес Вояж`,
+    description: `Национальная валюта ${countryName} - ${currency}. Курс к рублю, где обменять, использование карт, чаевые и финансовые советы.`,
     url: `/wiki/${country}/currency`,
     type: 'article',
     keywords: [
@@ -46,10 +48,10 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   });
 }
 
-const faqs = [
+const getCurrencyFaqs = (countryName: string) => [
   {
-    question: `Какая валюта используется в {''}?`,
-    answer: 'Официальная валюта страны. Рекомендуем обменять рубли на местную валюту в банках или официальных обменниках для получения выгодного курса.'
+    question: `Какая валюта используется в ${countryName}?`,
+    answer: `Официальная валюта ${countryName}. Рекомендуем обменять рубли на местную валюту в банках или официальных обменниках для получения выгодного курса.`
   },
   {
     question: 'Где лучше обменять валюту?',
@@ -77,12 +79,14 @@ export default async function CurrencyPage({ params }: { params: Promise<{ count
   }
 
   const countryName = countryData?.title?.split('—')[0]?.trim() || country;
-  const currency = 'местная валюта';
+  const mdxData = await getCountryMdxData(country);
+  const currency = mdxData?.frontmatter?.currency || 'местная валюта';
+  const faqs = getCurrencyFaqs(countryName);
 
   const schemas = [
     ...(await generateUniversalSchemas({
-      title: `Валюта ${countryName}, курс к рублю 2026 | Велес Вояж`,
-      description: `Национальная валюта ${countryName} - ${currency}. Курс к рублю, где обменять, использование карт, чаевые и финансовые советы для туристов.`,
+      title: `Валюта ${countryName} 2026 | Велес Вояж`,
+      description: `Национальная валюта ${countryName}, курс к рублю, где обменять, использование карт, чаевые и финансовые советы.`,
       url: `/wiki/${country}/currency`,
       type: 'article',
       keywords: [
