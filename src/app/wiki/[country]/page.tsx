@@ -23,6 +23,7 @@ import { generateCountrySEOMetadata } from '@/shared/utils/generateCountrySEOMet
 import { generateUniversalMetadata, generateUniversalSchemas } from '@/lib/seo/universalSEO';
 import { isDisputedTerritory, getPoliticalStatus, getPoliticalStatusNote } from '@/shared/constants/disputedTerritories';
 import { SchemaScripts } from '@/components/SchemaScripts';
+import { ZkpBadge } from '@/components/ZkpTrustBadge';
 import InteractiveMap from '@/components/mdx/InteractiveMap';
 // Заглушка для CountryMap компонента
 const CountryMap = ({ countryName, countryId: _countryId, coordinates: _coordinates }: any) => (
@@ -257,6 +258,21 @@ export default async function CountryPage({ params }: { params: Promise<{ countr
     <div className="container mx-auto px-4 max-w-4xl">
       {/* Структурированные данные для SEO с универсальным скриптом */}
       <SchemaScripts schemas={schemas} />
+
+      <ZkpBadge
+        subjectId={`wiki/${normalizedCountry}`}
+        schema="veles-voyage:wiki-editorial-v1"
+        contentText={
+          typeof countryData?.content === 'string'
+            ? countryData.content
+            : (countryData?.frontmatter?.description || countryData?.frontmatter?.title || normalizedCountry)
+        }
+        claims={{
+          reviewedBy: 'editorial',
+          contentSource: 'mdx',
+          countryId: normalizedCountry,
+        }}
+      />
 
       {/* Верхнее прокручивающееся меню - Оптимизированный адаптивный дизайн */}
       <div className="sticky top-16 md:top-20 bg-white/95 dark:bg-gray-900/95 backdrop-blur-xl border-b border-gray-200 dark:border-gray-800 py-3 mb-8 -mx-4 px-4 z-[50] shadow-xl mt-4">
