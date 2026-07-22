@@ -5,6 +5,46 @@ import { getWikiPages } from '@/shared/data/wikiPages-mdx';
 import { generateUniversalMetadata, generateUniversalSchemas, generateBreadcrumbSchema } from '@/lib/seo/universalSEO';
 import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
 import { SchemaScripts } from '@/components/SchemaScripts';
+import { getCountryMdxData } from '@/shared/utils/generateCountrySEOMetadata';
+import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
+
+const VISA_FAQS_REQUIRED = [
+  {
+    question: 'Нужна ли виза для россиян в 2026 году?',
+    answer: 'Для въезда в эту страну гражданам РФ требуется виза. Оформление возможно через консульство или визовый центр. Точные требования и сроки уточняйте у менеджера Велес Вояж.'
+  },
+  {
+    question: 'Какие документы нужны для оформления визы?',
+    answer: 'Загранпаспорт (действителен минимум 6 месяцев после даты въезда), заполненная визовая анкета, фотографии, копия загранпаспорта, медицинская страховка, бронь отеля или приглашение, билеты в обе стороны, справка с работы о доходах.'
+  },
+  {
+    question: 'Сколько времени занимает оформление визы?',
+    answer: 'Срок оформления зависит от консульства и типа визы. Стандартно — от 5 до 30 рабочих дней. Рекомендуется подавать документы за 1-2 месяца до поездки.'
+  },
+  {
+    question: 'Можно ли оформить визу самостоятельно или нужен посредник?',
+    answer: 'Визу можно оформить самостоятельно через консульство, но мы рекомендуем обратиться в турагентство Велес Вояж для консультации и помощи с оформлением. Это сэкономит вам время и снимет риски отказа.'
+  }
+];
+
+const VISA_FAQS_NOT_REQUIRED = [
+  {
+    question: 'Нужна ли виза для россиян в 2026 году?',
+    answer: 'Для въезда в эту страну гражданам РФ виза не требуется. Достаточно действующего загранпаспорта и обратных билетов. При въезде могут спросить подтверждение достаточного количества средств и бронь отеля.'
+  },
+  {
+    question: 'Сколько можно находиться в стране без визы?',
+    answer: 'Срок пребывания без визы зависит от страны и обычно составляет от 30 до 90 дней. Точный лимит уточняйте при планировании поездки.'
+  },
+  {
+    question: 'Какие документы нужны при безвизовом въезде?',
+    answer: 'Загранпаспорт (действителен минимум 6 месяцев после даты въезда), обратные билеты, бронь отеля, медицинская страховка. Рекомендуем также иметь при себе подтверждение достаточных средств.'
+  },
+  {
+    question: 'Можно ли продлить пребывание?',
+    answer: 'В некоторых странах пребывание можно продлить через местное иммиграционное управление. О возможности и порядке продления уточняйте у менеджеров Велес Вояж.'
+  }
+];
 
 export async function generateStaticParams() {
   const wikiPages = await getWikiPages();
@@ -18,7 +58,7 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   const { country } = await params;
   const wikiPages = await getWikiPages();
   if (!wikiPages) return { title: 'Страница не найдена' };
-  
+
   const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
@@ -27,7 +67,8 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
     };
   }
 
-  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
+  const rawName = countryData?.title?.split('—')[0]?.trim() || country;
+  const countryName = countryNamesDictionary[country] || rawName;
 
   return generateUniversalMetadata({
     title: `Виза в ${countryName} для россиян 2026 | Велес Вояж`,
@@ -45,38 +86,22 @@ export async function generateMetadata({ params }: { params: Promise<{ country: 
   });
 }
 
-const faqs = [
-  {
-    question: 'Нужна ли виза для россиян в 2026 году?',
-    answer: 'Для въезда в эту страну гражданам РФ требуется виза. Консульский сбор составляет примерно 80 € для взрослых, 40 € для детей 6-12 лет. Дети до 6 лет освобождены от оплаты. Виза оформляется в среднем 10-15 рабочих дней.'
-  },
-  {
-    question: 'Какие документы нужны для оформления визы?',
-    answer: 'Загранпаспорт (действителен минимум 6 месяцев после даты въезда), заполненная визовая анкета, фотографии 3.5x4.5 см (2 шт.), копия загранпаспорта, медицинская страховка (минимум 30 000 €), бронь отеля или приглашение, билеты в обе стороны, справка с работы о доходах.'
-  },
-  {
-    question: 'Сколько стоит виза и сколько времени она оформляется?',
-    answer: 'Консульский сбор составляет примерно 80 € для взрослых, 40 € для детей 6-12 лет. Дети до 6 лет освобождены от оплаты. Виза оформляется в среднем 10-15 рабочих дней. Рекомендуется подавать документы за 1-2 месяца до поездки.'
-  },
-  {
-    question: 'Можно ли оформить визу самостоятельно или нужен посредник?',
-    answer: 'Визу можно оформить самостоятельно через консульство, но мы рекомендуем обратиться в турагентство Велес Вояж для консультации и помощи с оформлением. Это сэкономит вам время и снимет риски отказа.'
-  }
-];
-
 export default async function VisaPage({ params }: { params: Promise<{ country: string }> }) {
   const { country } = await params;
   const wikiPages = await getWikiPages();
   if (!wikiPages) return notFound();
-  
+
   const countryData = Object.values(wikiPages).find((p: any) => p.id === country);
 
   if (!countryData) {
     notFound();
   }
 
-  const countryName = countryData?.title?.split('—')[0]?.trim() || country;
-  const visaRequired = true;
+  const rawName = countryData?.title?.split('—')[0]?.trim() || country;
+  const countryName = countryNamesDictionary[country] || rawName;
+  const mdxData = await getCountryMdxData(country);
+  const visaRequired = mdxData?.frontmatter?.visaRequirements ?? true;
+  const faqs = visaRequired ? VISA_FAQS_REQUIRED : VISA_FAQS_NOT_REQUIRED;
 
   const schemas = [
     ...(await generateUniversalSchemas({

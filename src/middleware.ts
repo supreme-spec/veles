@@ -67,6 +67,10 @@ const LEGACY_SLUG_MAP: Record<string, string> = {
   'vanuatu-gid': 'vanuatu',
   'kitai-gid': 'china',
   'yaponiya-gid': 'japan',
+  'tury-iz-dagestan': 'dagestan',
+  'tury-iz-liski': 'liski',
+  'tury-iz-lipetsk': 'lipetsk',
+  'tury-iz-rostov-na-donu': 'rostov-on-don',
 };
 
 // Справочники для разрешения битых внутренних ссылок вида /wiki/<тип>/<имя>
