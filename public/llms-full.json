@@ -1,7 +1,7 @@
 {
   "metadata": {
     "version": "2.0",
-    "generated": "2026-07-22T17:26:12.152Z",
+    "generated": "2026-07-22T17:52:53.220Z",
     "provider": "ООО «Велес» (РТА 0035678)",
     "website": "https://www.veles-voyage.ru"
   },
@@ -18,8 +18,8 @@
       "south-america": 12,
       "oceania": 16
     },
-    "totalSize": 164240,
-    "processingTime": 434
+    "totalSize": 164243,
+    "processingTime": 416
   },
   "organization": {
     "name": "Велес Вояж",
@@ -2094,7 +2094,7 @@
       "language": "испанский (английский в турзонах)",
       "bestTimeToVisit": "декабрь, январь, февраль, март, апрель",
       "estimatedCost": "250000",
-      "visaRequirements": true,
+      "visaRequirements": false,
       "keywords": [
         "Мексика 2026, путеводитель по Мексике, отдых в Мексике,  достопримечательности Мексики, виза в Мексику, Канкун, Чичен-Ица,  сеноты, безопасность Мексика, текила"
       ],

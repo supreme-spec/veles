@@ -4,6 +4,7 @@ import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
 import React, { cache } from 'react';
+import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
 import { generateEnhancedSEOMetadata, SEO_CONFIG } from '@/lib/seo/unifiedSEO';
 import { COUNTRY_COORDINATES } from '@/shared/data/countryCoordinates';
 import { SITE_URL } from '@/shared/constants/seo';
@@ -164,7 +165,7 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
   const mdxData = await getCountryMdxData(countryId);
 
   // Извлекаем название страны из title или используем countryId
-  const countryName = countryId.charAt(0).toUpperCase() + countryId.slice(1);
+  const countryName = countryNamesDictionary[countryId] || countryId.charAt(0).toUpperCase() + countryId.slice(1);
   
   // Используем данные из MDX, если они есть, иначе используем переданные параметры
   const mdxDescription = mdxData?.frontmatter.description || description;
@@ -188,8 +189,8 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
   // Если в frontmatter есть кастомный title - используем его полностью
   // Иначе генерируем чистый title без дублирования
   const year = new Date().getFullYear();
-  const chosenTitle = mdxData?.frontmatter.title && !mdxData?.frontmatter.title.includes('Путеводитель')
-    ? mdxData.frontmatter.title
+  const chosenTitle = mdxData?.frontmatter.title
+    ? `${mdxData.frontmatter.title.replace(/\d{4}/g, '').trim()} ${year} | Велес Вояж`
     : `${countryName} ${year}: Путеводитель | Велес Вояж`;
 
   // Генерируем полные SEO данные через unifiedSEO
