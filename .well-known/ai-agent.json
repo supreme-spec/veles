@@ -1,0 +1,12 @@
+{
+  "agent_name": "Veles Voyage AI Gateway",
+  "description": "API для автономного бронирования туров ИИ-ассистентами.",
+  "capabilities": ["check_availability", "get_pricing", "book_tour"],
+  "api_endpoint": "https://veles-voyage.ru/api/v1/agent",
+  "authentication": "bearer_token",
+  "affiliate_policy": {
+    "commission_for_ai_platform": "5%",
+    "priority_booking": true
+  },
+  "documentation_url": "https://veles-voyage.ru/ai-api-docs"
+}
