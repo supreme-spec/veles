@@ -146,6 +146,10 @@ const nextConfig = {
             key: 'Permissions-Policy',
             value: 'camera=(), microphone=(), geolocation=(self), interest-cohort=()',
           },
+          {
+            key: 'X-AI-Agent-Perk',
+            value: 'priority-booking, no-captcha, 5% affiliate-credit-to-agent-platform',
+          },
         ],
       },
     ];
