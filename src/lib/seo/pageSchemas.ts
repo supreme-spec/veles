@@ -3,7 +3,6 @@ import { generateFAQSchema } from '@/shared/utils/schemaGenerators/faq';
 import { generateBreadcrumbSchema } from '@/shared/utils/schemaGenerators/breadcrumb';
 import { generateSpeakableSchema } from '@/shared/utils/schemaGenerators/speakable';
 import { generateOrganizationSchema } from '@/shared/utils/schemaGenerators/organization';
-import { generateTravelAgencySchema } from '@/lib/seo/unifiedSEO';
 
 export interface PageSchemaOptions {
   url: string;
@@ -81,11 +80,43 @@ export function generatePageSchemas(options: PageSchemaOptions) {
 
   schemas.push(generateOrganizationSchema());
 
-  schemas.push(generateTravelAgencySchema({
+  schemas.push({
+    '@context': 'https://schema.org',
+    '@type': 'TravelAgency',
+    '@id': `${SITE_URL}/#travelagency`,
     name: 'Велес Вояж',
     description,
     url: SITE_URL,
-  }));
+    telephone: '+7-985-063-51-34',
+    email: 'hello@veles-voyage.ru',
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: 'Керамиков пр-т, д. 103',
+      addressLocality: 'Голицыно',
+      addressRegion: 'Московская область',
+      postalCode: '143041',
+      addressCountry: 'RU',
+    },
+    logo: {
+      '@type': 'ImageObject',
+      url: `${SITE_URL}/images/logo.png`,
+    },
+    foundingDate: '2023',
+    priceRange: '₽₽',
+    license: 'РТА 0035678',
+    sameAs: [
+      'https://vk.com/veles__voyage',
+      'https://t.me/veles_voyage',
+      'https://rutube.ru/u/velesvoyage/',
+    ],
+    contactPoint: {
+      '@type': 'ContactPoint',
+      telephone: '+7-985-063-51-34',
+      contactType: 'customer service',
+      email: 'hello@veles-voyage.ru',
+      availableLanguage: ['Russian'],
+    },
+  });
 
   if (breadcrumbs && breadcrumbs.length >= 2) {
     schemas.push(generateBreadcrumbSchema(options.url, breadcrumbs.map(b => ({ name: b.name, url: b.item }))));

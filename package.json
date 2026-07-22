@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npm run build:llm && next build",
+    "build:llm": "tsx scripts/generate-llms-full.ts",
+  "build": "npm run build:llm && next build",
     "start": "next start",
     "lint": "next lint",
     "lint:fix": "next lint --fix",

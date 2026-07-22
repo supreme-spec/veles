@@ -323,7 +323,7 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
   const { type, title, geo, url } = options;
   const fullUrl = url.startsWith('http') ? url : `${UNIVERSAL_SEO_CONFIG.siteUrl}${url}`;
 
-  let schemas: object[] = [];
+  let schemas: any[] = [];
 
   // Правильная маршрутизация в зависимости от типа контента
   switch (type) {
