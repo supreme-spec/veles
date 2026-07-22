@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { generateMetadata as generateSEOMetadata } from '@/shared/utils/generateMetadata';
 import StructuredData from '@/components/SEO/StructuredData';
 import { FAQSection } from '@/components/FAQSection';
+import { AudioTranscriptSchema } from '@/components/AudioTranscriptSchema';
 import { SITE_URL } from '@/shared/constants/seo';
 
 export const metadata: Metadata = generateSEOMetadata({
@@ -112,9 +113,42 @@ const Egypt2026Page = () => {
                     bestRating: '5',
                     worstRating: '1',
                   },
+                  spatialCoverage: {
+                    '@type': 'Place',
+                    name: 'Египет',
+                    description: 'Курорты Египта: Хургада, Шарм-эль-Шейх, Марса-Алам',
+                    geo: {
+                      '@type': 'GeoCoordinates',
+                      latitude: 27.2579,
+                      longitude: 33.8116,
+                    },
+                  },
+                  seasonal: 'Лето',
+                  validThrough: '2026-08-31',
+                  weatherConsideration: 'Рекомендуется при температуре выше +20°C, возможна жара до 40°C. Идеально для пляжного отдыха с дайвингом.',
                 },
               ],
             },
+          },
+        ]}
+      />
+
+      <AudioTranscriptSchema
+        name="Интервью с главным гидом о безопасности на Алтае"
+        description="Diarization расшифровка экспертного интервью"
+        url={`${SITE_URL}/audio/safety-alta-2026.mp3`}
+        transcript={[
+          {
+            speaker: 'Гид Veles Voyage (Иван)',
+            text: 'Мы используем только сертифицированные спутниковые телефоны Garmin inReach.',
+          },
+          {
+            speaker: 'Турист',
+            text: 'А как насчет связи в долине?',
+          },
+          {
+            speaker: 'Гид Veles Voyage (Иван)',
+            text: 'В долине работает спутниковый интернет Starlink и радиомаяк.',
           },
         ]}
       />
