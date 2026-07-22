@@ -22,8 +22,8 @@ const articleSchema = missionSchemas.find(s => s['@type'] === 'Article') as any;
 const faqSchema = missionSchemas.find(s => s['@type'] === 'FAQPage') as any;
 
 export const metadata: Metadata = generateSEOMetadata({
-  title: articleSchema?.headline || 'Наша миссия: философия Велес Вояж 2026',
-  description: articleSchema?.description || 'Философия турагентства Велес Вояж. Открываем мир через призму личного опыта. Индивидуальный подход, качество услуг, устойчивый туризм, культурный обмен, образовательные путешествия, профессиональные туристы, путешествия по России, международные туры, туризм 2026.',
+  title: 'Наша миссия: философия Велес Вояж 2026 | Путешествия',
+  description: 'Философия турагентства Велес Вояж. Открываем мир через призму личного опыта. Индивидуальный подход, качество услуг, устойчивый туризм, культурный обмен.',
   url: 'https://www.veles-voyage.ru/mission',
   type: 'article',
   keywords: articleSchema?.keywords || [],

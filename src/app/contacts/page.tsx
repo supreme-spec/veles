@@ -7,7 +7,7 @@ import { generateMetadata as generateSEOMetadata } from '@/shared/utils/generate
 import { SITE_URL } from '@/shared/constants/seo';
 
 export const metadata: Metadata = generateSEOMetadata({
-  title: 'Контакты Велес Вояж: телефон и офисы 2026',
+  title: 'Контакты Велес Вояж: телефон и офисы 2026 | Связь',
   description: 'Контакты турагентства: телефон +7 985 063-51-34, email hello@veles-voyage.ru, Telegram. Офисы в Голицыно и Пушкино. Дистанционное обслуживание по всей России.',
   url: `${SITE_URL}/contacts`,
   type: 'website',

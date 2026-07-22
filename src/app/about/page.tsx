@@ -14,7 +14,7 @@ const articleSchema = aboutSchemas.find(s => s['@type'] === 'Article') as any;
 const faqSchema = aboutSchemas.find(s => s['@type'] === 'FAQPage') as any;
 
 export const metadata: Metadata = generateSEOMetadata({
-  title: 'О компании Велес Вояж: туры и круизы 2026',
+  title: 'О компании Велес Вояж: туры и круизы 2026 | Эксперты',
   description: 'Турагентство Велес Вояж с лицензией РТА 0035678. Индивидуальные туры и круизы по России и миру, энциклопедия по 200+ странам, поддержка 24/7.',
   url: 'https://www.veles-voyage.ru/about',
   type: 'article',

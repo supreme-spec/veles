@@ -194,9 +194,20 @@ export async function generateCountrySEOMetadata(options: CountrySEOMetadataOpti
     ? mdxData.frontmatter.title.replace(/\d{4}/g, '').trim()
     : '';
   const baseTitle = rawTitle.replace(/\s*\|\s*Велес\s+Вояж\s*$/i, '').trim();
-  const chosenTitle = baseTitle
+  
+  // Генерируем title с минимальной длиной 50-60 символов для SEO
+  let chosenTitle = baseTitle
     ? `${baseTitle} ${year} | Велес Вояж`
     : `${countryNameAccusative} ${year}: Путеводитель | Велес Вояж`;
+  
+  // Если title слишком короткий (< 50 символов), добавляем описательные слова
+  if (chosenTitle.length < 50) {
+    if (baseTitle) {
+      chosenTitle = `Полный путеводитель: ${baseTitle} ${year} | Велес Вояж`;
+    } else {
+      chosenTitle = `${countryNameAccusative} ${year}: экспертный путеводитель | Велес Вояж`;
+    }
+  }
 
   // Генерируем полные SEO данные через unifiedSEO
   const canonicalUrl = url || `${SITE_URL}/wiki/${countryId}`;

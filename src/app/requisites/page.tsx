@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { SITE_URL } from '@/shared/constants/seo';
 
 export const metadata: Metadata = {
-  title: 'Реквизиты ООО Велес: турагентство Велес Вояж',
+  title: 'Реквизиты ООО Велес: турагентство Велес Вояж 2026',
   description: 'Официальные реквизиты ООО «Велес» - туристического агентства Велес Вояж. ИНН, ОГРН, банковские реквизиты, юридический адрес. Лицензия РТА 0035678.',
   keywords: [
     'реквизиты',

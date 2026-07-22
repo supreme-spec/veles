@@ -1,3 +1,10 @@
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Условия использования Велес Вояж 2026 | Правила',
+  description: 'Условия использования платформы Велес Вояж. Регулирование отношений при использовании услуг и подключении кошельков.',
+};
+
 export default function TermsPage() {
   return (
     <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-12 max-w-4xl">

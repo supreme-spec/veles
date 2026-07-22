@@ -12,9 +12,9 @@ import { WORLD_DESTINATIONS_DATA } from '@/shared/data/worldDestinationsData';
 import { SITE_URL } from '@/shared/constants/seo';
 import { DestinationImage } from '@/components/DestinationImage';
 export const metadata: Metadata = generateSEOMetadata({
-  title: 'Велес Вояж: туры, круизы и путешествия 2026',
+  title: 'Велес Вояж: туры и круизы 2026 | Путешествия',
   description:
-    'Официальное турагентство Велес Вояж (РТА 0035678). Подбор туров в Турцию, Египет, ОАЭ и морских круизов. Индивидуальные маршруты, поддержка 24/7, лучшие цены. Звоните: +7 (985) 063-51-34.',
+    'Турагентство Велес Вояж (РТА 0035678): подбор туров в Турцию, Египет, ОАЭ, морские круизы. Поддержка 24/7.',
   url: SITE_URL,
   type: 'website',
   keywords: [
