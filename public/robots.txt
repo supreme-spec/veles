@@ -3,6 +3,8 @@
 
 User-agent: *
 Allow: /
+Allow: /_next/static/
+Allow: /images/
 Allow: /wiki/
 Allow: /tours/
 Allow: /cruises/
@@ -14,8 +16,6 @@ Allow: /places/
 # Запрет индексации служебных директорий
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 Disallow: /__tests__/
 Disallow: /.git/
 Disallow: /node_modules/
@@ -39,10 +39,10 @@ Sitemap: https://www.veles-voyage.ru/api/sitemap-index
 # Яндекс.Вебмастер
 User-agent: Yandex
 Allow: /
+Allow: /_next/static/
+Allow: /images/
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 Disallow: /__tests__/
 Disallow: /.git/
 Disallow: /node_modules/
@@ -59,10 +59,10 @@ Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content&utm_referre
 # Googlebot
 User-agent: Googlebot
 Allow: /
+Allow: /_next/static/
+Allow: /images/
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 Disallow: /__tests__/
 Disallow: /.git/
 Disallow: /node_modules/
@@ -78,10 +78,10 @@ Disallow: /search.xml
 # Другие боты
 User-agent: Bingbot
 Allow: /
+Allow: /_next/static/
+Allow: /images/
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 Disallow: /__tests__/
 Disallow: /.git/
 Disallow: /node_modules/
@@ -96,10 +96,10 @@ Disallow: /search.xml
 
 User-agent: DuckDuckBot
 Allow: /
+Allow: /_next/static/
+Allow: /images/
 Disallow: /api/
 Disallow: /admin/
-Disallow: /_next/
-Disallow: /static/
 Disallow: /__tests__/
 Disallow: /.git/
 Disallow: /node_modules/

@@ -3,8 +3,8 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { WeeklyServicePhoto } from '@/shared/components/ui/WeeklyServicePhoto';
 import { generateEnhancedSEOMetadata as generateSEOMetadata } from '@/lib/seo/unifiedSEO';
-import { generateFAQSchema } from '@/lib/seo/unifiedSEO';
-import StructuredData from '@/components/SEO/StructuredData';
+import { generateUniversalSchemas } from '@/lib/seo/universalSEO';
+import { SchemaScripts } from '@/components/SchemaScripts';
 import { FAQSection } from '@/components/FAQSection';
 import { BookingSteps } from '@/components/BookingSteps';
 import { WeeklyHeroBackground } from '@/shared/components/ui/WeeklyHeroBackground';
@@ -52,7 +52,45 @@ const POPULAR_DESTINATION_SLUGS = [
   'вьетнам',
 ];
 
-export default function Home() {
+export default async function Home() {
+  const schemas = await generateUniversalSchemas({
+    title: 'Велес Вояж: туры, круизы и путешествия 2026',
+    description:
+      'Официальное турагентство Велес Вояж (РТА 0035678). Подбор туров в Турцию, Египет, ОАЭ и морских круизов. Индивидуальные маршруты, поддержка 24/7, лучшие цены.',
+    url: SITE_URL,
+    type: 'website',
+    keywords: [
+      'индивидуальные туры',
+      'авторские путешествия',
+      'морские круизы 2026',
+      'путеводители по странам',
+      'турагентство Велес Вояж',
+      'РТА 0035678'
+    ],
+    faqs: [
+      {
+        question: 'Как забронировать тур в Велес Вояж?',
+        answer:
+          'Забронируйте тур онлайн на сайте или позвоните +7 985 063-51-34. Менеджер подберет маршрут и свяжется с вами в течение 15 минут.'
+      },
+      {
+        question: 'Работаете ли вы с турами по России?',
+        answer:
+          'Да, мы организуем индивидуальные путешествия по всем регионам России, а также международные туры и морские круизы с полной поддержкой 24/7.'
+      },
+      {
+        question: 'Нужна ли виза в Египет в 2026 году?',
+        answer:
+          'Для граждан России виза в Египет оформляется по прибытии в аэропорт (стоимость около 25 USD) либо заранее через электронную визу. Загранпаспорт должен быть действителен минимум 6 месяцев.'
+      },
+      {
+        question: 'Сколько стоит тур в Турцию «всё включено» из Москвы?',
+        answer:
+          'Тур в Турцию «всё включено» из Москвы на двоих обычно стоит от 90 000 до 160 000 рублей за 7 ночей в зависимости от отеля и сезона. Точную цену подберёт менеджер Велес Вояж.'
+      }
+    ],
+  });
+
   const faqData = [
     {
       question: 'Как забронировать тур в Велес Вояж?',
@@ -78,7 +116,7 @@ export default function Home() {
 
   return (
     <>
-      <StructuredData schemas={[generateFAQSchema(faqData)]} />
+      <SchemaScripts schemas={schemas} />
       <main className="min-h-screen">
         {/* Hero Section */}
         <WeeklyHeroBackground>
