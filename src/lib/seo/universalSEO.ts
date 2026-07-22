@@ -23,7 +23,7 @@ export interface UniversalSEOOptions {
   url: string;
   image?: string;
   keywords?: string[];
-  type?: 'website' | 'article' | 'country' | 'territory' | 'city' | 'attraction' | 'guide' | 'places';
+  type?: 'website' | 'article' | 'country' | 'territory' | 'city' | 'attraction' | 'guide' | 'places' | 'tour';
   section?: string;
 
   // Флаги для различных платформ
@@ -334,12 +334,19 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         "@type": "Article",
         "headline": `Путеводитель по ${title}`,
         "description": options.description,
-        "url": options.url,
+        "url": fullUrl,
         "datePublished": options.publishedTime || new Date().toISOString(),
         "dateModified": options.modifiedTime || new Date().toISOString(),
         "author": {
-          "@type": "Organization",
-          "name": options.author || UNIVERSAL_SEO_CONFIG.organization
+          "@type": "Person",
+          "name": "Сергей Свистунов",
+          "url": `${UNIVERSAL_SEO_CONFIG.siteUrl}/team/sergey-svistunov`,
+          "sameAs": [
+            "https://finradun.ru",
+            "https://vk.com/veles__voyage",
+            "https://t.me/veles_voyage",
+            "https://www.instagram.com/radun.veles/"
+          ]
         },
         "publisher": {
           "@type": "Organization",
@@ -348,6 +355,10 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
             "@type": "ImageObject",
             "url": UNIVERSAL_SEO_CONFIG.logoUrl
           }
+        },
+        "mainEntityOfPage": {
+          "@type": "WebPage",
+          "@id": fullUrl
         },
         "about": {
           "@type": "Country",
@@ -375,10 +386,48 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
             }
           })
         },
-        "touristType": "Tourism",
+        "touristType": ["Туристы", "Семьи с детьми", "Молодожёны", "Бэкпекеры"],
         ...(options.keywords && options.keywords.length > 0 && {
           "keywords": options.keywords.join(', ')
         })
+      });
+
+      // Добавляем TravelAgency схему
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "@id": `${UNIVERSAL_SEO_CONFIG.siteUrl}/#travelagency`,
+        "name": UNIVERSAL_SEO_CONFIG.organization,
+        "description": "Туристическое агентство Велес Вояж — эксперты в организации индивидуальных туров, морских круизов и путешествий по России и миру.",
+        "url": UNIVERSAL_SEO_CONFIG.siteUrl,
+        "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+        "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": UNIVERSAL_SEO_CONFIG.address.streetAddress,
+          "addressLocality": UNIVERSAL_SEO_CONFIG.address.addressLocality,
+          "postalCode": UNIVERSAL_SEO_CONFIG.address.postalCode,
+          "addressCountry": UNIVERSAL_SEO_CONFIG.address.addressCountry
+        },
+        "logo": {
+          "@type": "ImageObject",
+          "url": UNIVERSAL_SEO_CONFIG.logoUrl
+        },
+        "foundingDate": UNIVERSAL_SEO_CONFIG.foundingYear.toString(),
+        "priceRange": UNIVERSAL_SEO_CONFIG.priceRange,
+        "license": "РТА 0035678",
+        "sameAs": [
+          UNIVERSAL_SEO_CONFIG.social.vk,
+          UNIVERSAL_SEO_CONFIG.social.telegram,
+          UNIVERSAL_SEO_CONFIG.social.rutube
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+          "contactType": "customer service",
+          "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+          "availableLanguage": ["Russian"]
+        }
       });
 
       // Добавляем хлебные крошки (Home > Wiki > Country)
@@ -397,12 +446,27 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
       // Speakable schema for voice assistants
       schemas.push({
         "@context": "https://schema.org",
-        "@id": `${fullUrl}#speakable`,
+        "@type": "WebPage",
+        "@id": fullUrl,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
         },
-        "name": options.title
+        "name": options.title,
+        "description": options.description
       });
       break;
 
@@ -473,14 +537,30 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         schemas.push(generateFAQSchema(options.faqs));
       }
 
+      // Speakable schema for voice assistants
       schemas.push({
         "@context": "https://schema.org",
-        "@id": `${fullUrl}#speakable`,
+        "@type": "WebPage",
+        "@id": fullUrl,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
         },
-        "name": options.title
+        "name": options.title,
+        "description": options.description
       });
       break;
 
@@ -528,15 +608,30 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         schemas.push(generateFAQSchema(options.faqs));
       }
 
+      // Speakable schema for voice assistants
       schemas.push({
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "@id": `${fullUrl}#speakable`,
+        "@id": fullUrl,
         "speakable": {
           "@type": "SpeakableSpecification",
-          "cssSelector": [".direct-answer", "#speakable-summary", "article > h1 + p", ".faq-answer"]
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
         },
-        "name": options.title
+        "name": options.title,
+        "description": options.description
       });
       break;
 
@@ -549,6 +644,32 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         region: 'RU' // Можно уточнить регион при необходимости
       });
       schemas = [placeSchema];
+
+      // Speakable schema for voice assistants
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": fullUrl,
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
+        },
+        "name": options.title,
+        "description": options.description
+      });
       break;
 
     case 'article':
@@ -574,6 +695,239 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
           }
         }
       }];
+
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "@id": `${UNIVERSAL_SEO_CONFIG.siteUrl}/#website`,
+        "name": UNIVERSAL_SEO_CONFIG.siteName,
+        "url": UNIVERSAL_SEO_CONFIG.siteUrl,
+        "inLanguage": "ru-RU",
+        "publisher": {
+          "@type": "Organization",
+          "name": UNIVERSAL_SEO_CONFIG.organization,
+          "@id": `${UNIVERSAL_SEO_CONFIG.siteUrl}/#organization`
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": {
+            "@type": "EntryPoint",
+            "urlTemplate": `${UNIVERSAL_SEO_CONFIG.siteUrl}/wiki/search?q={search_term_string}`
+          },
+          "query-input": "required name=search_term_string"
+        }
+      });
+
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "@id": `${UNIVERSAL_SEO_CONFIG.siteUrl}/#travelagency`,
+        "name": UNIVERSAL_SEO_CONFIG.organization,
+        "url": UNIVERSAL_SEO_CONFIG.siteUrl,
+        "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+        "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": UNIVERSAL_SEO_CONFIG.address.streetAddress,
+          "addressLocality": UNIVERSAL_SEO_CONFIG.address.addressLocality,
+          "postalCode": UNIVERSAL_SEO_CONFIG.address.postalCode,
+          "addressCountry": UNIVERSAL_SEO_CONFIG.address.addressCountry
+        },
+        "logo": {
+          "@type": "ImageObject",
+          "url": UNIVERSAL_SEO_CONFIG.logoUrl
+        },
+        "foundingDate": UNIVERSAL_SEO_CONFIG.foundingYear.toString(),
+        "priceRange": UNIVERSAL_SEO_CONFIG.priceRange,
+        "license": "РТА 0035678",
+        "sameAs": [
+          UNIVERSAL_SEO_CONFIG.social.vk,
+          UNIVERSAL_SEO_CONFIG.social.telegram,
+          UNIVERSAL_SEO_CONFIG.social.rutube
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+          "contactType": "customer service",
+          "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+          "availableLanguage": ["Russian"]
+        }
+      });
+
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "TouristAttraction",
+        "name": UNIVERSAL_SEO_CONFIG.organization,
+        "url": options.url,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": UNIVERSAL_SEO_CONFIG.address.streetAddress,
+          "addressLocality": UNIVERSAL_SEO_CONFIG.address.addressLocality,
+          "postalCode": UNIVERSAL_SEO_CONFIG.address.postalCode,
+          "addressCountry": UNIVERSAL_SEO_CONFIG.address.addressCountry
+        },
+        "touristType": ["Туристы", "Семьи с детьми", "Романтические пары"]
+      });
+
+      // Speakable schema for voice assistants
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": fullUrl,
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
+        },
+        "name": options.title,
+        "description": options.description
+      });
+
+      if (options.faqs && options.faqs.length > 0) {
+        schemas.push(generateFAQSchema(options.faqs));
+      }
+
+      // Добавляем TouristDestination для статей о направлениях (wiki подстраницы)
+      if (options.geo && (options.geo.latitude !== 0 || options.geo.longitude !== 0)) {
+        schemas.push({
+          "@context": "https://schema.org",
+          "@type": "TouristDestination",
+          "name": title,
+          "description": options.description,
+          "url": fullUrl,
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": options.geo.latitude,
+            "longitude": options.geo.longitude
+          },
+          "touristType": "Tourism"
+        });
+      }
+
+      const articleBreadcrumb = generateBreadcrumbSchema([
+        { name: 'Главная', item: '/' },
+        { name: title, item: options.url }
+      ]);
+      if (articleBreadcrumb) schemas.push(articleBreadcrumb);
+      break;
+
+    case 'guide':
+      // Страницы сравнения направлений (/compare/*)
+      schemas = [{
+        "@context": "https://schema.org",
+        "@type": "Article",
+        "headline": title,
+        "description": options.description,
+        "image": options.image || UNIVERSAL_SEO_CONFIG.logoUrl,
+        "datePublished": options.publishedTime || new Date().toISOString(),
+        "dateModified": options.modifiedTime || new Date().toISOString(),
+        "author": {
+          "@type": "Organization",
+          "name": options.author || UNIVERSAL_SEO_CONFIG.organization
+        },
+        "publisher": {
+          "@type": "Organization",
+          "name": UNIVERSAL_SEO_CONFIG.organization,
+          "logo": {
+            "@type": "ImageObject",
+            "url": UNIVERSAL_SEO_CONFIG.logoUrl
+          }
+        }
+      }];
+
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "TouristDestination",
+        "name": title,
+        "description": options.description,
+        "url": fullUrl,
+        "touristType": "Tourism"
+      });
+
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "TravelAgency",
+        "@id": `${UNIVERSAL_SEO_CONFIG.siteUrl}/#travelagency`,
+        "name": UNIVERSAL_SEO_CONFIG.organization,
+        "url": UNIVERSAL_SEO_CONFIG.siteUrl,
+        "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+        "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": UNIVERSAL_SEO_CONFIG.address.streetAddress,
+          "addressLocality": UNIVERSAL_SEO_CONFIG.address.addressLocality,
+          "postalCode": UNIVERSAL_SEO_CONFIG.address.postalCode,
+          "addressCountry": UNIVERSAL_SEO_CONFIG.address.addressCountry
+        },
+        "logo": {
+          "@type": "ImageObject",
+          "url": UNIVERSAL_SEO_CONFIG.logoUrl
+        },
+        "foundingDate": UNIVERSAL_SEO_CONFIG.foundingYear.toString(),
+        "priceRange": UNIVERSAL_SEO_CONFIG.priceRange,
+        "license": "РТА 0035678",
+        "sameAs": [
+          UNIVERSAL_SEO_CONFIG.social.vk,
+          UNIVERSAL_SEO_CONFIG.social.telegram,
+          UNIVERSAL_SEO_CONFIG.social.rutube
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "telephone": UNIVERSAL_SEO_CONFIG.contactPhone,
+          "contactType": "customer service",
+          "email": UNIVERSAL_SEO_CONFIG.contactEmail,
+          "availableLanguage": ["Russian"]
+        }
+      });
+
+      if (options.faqs && options.faqs.length > 0) {
+        schemas.push(generateFAQSchema(options.faqs));
+      }
+
+      // Speakable schema for voice assistants
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": fullUrl,
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
+        },
+        "name": options.title,
+        "description": options.description
+      });
+
+      const guideBreadcrumb = generateBreadcrumbSchema([
+        { name: 'Главная', item: '/' },
+        { name: 'Сравнения', item: '/compare' },
+        { name: title, item: options.url }
+      ]);
+      if (guideBreadcrumb) schemas.push(guideBreadcrumb);
       break;
 
     default:
@@ -585,8 +939,34 @@ export async function generateUniversalSchemas(options: UniversalSEOOptions): Pr
         "url": options.url,
         "description": options.description
       }];
+
+      // Speakable schema for voice assistants (default case)
+      schemas.push({
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "@id": fullUrl,
+        "speakable": {
+          "@type": "SpeakableSpecification",
+          "cssSelector": [
+            "h1",
+            "header > p",
+            ".prose h2",
+            ".prose h3",
+            ".prose p:first-of-type"
+          ],
+          "xpath": [
+            "/html/head/title",
+            "/html/body//h1",
+            "/html/body//header/p",
+            "/html/body//div[contains(@class, 'prose')]/h2[1]",
+            "/html/body//div[contains(@class, 'prose')]/p[1]"
+          ]
+        },
+        "name": options.title,
+        "description": options.description
+      });
   }
 
-  // Фильтрация null/undefined значений
-  return schemas.filter(schema => schema !== null && schema !== undefined) as object[];
+  // Фильтрация null/undefined значений и валидных схем
+  return schemas.filter(schema => schema !== null && schema !== undefined && schema['@type']) as object[];
 }
