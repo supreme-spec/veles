@@ -14,7 +14,7 @@ import { DestinationImage } from '@/components/DestinationImage';
 export const metadata: Metadata = generateSEOMetadata({
   title: 'Велес Вояж: туры и круизы 2026 | Путешествия',
   description:
-    'Турагентство Велес Вояж (РТА 0035678): подбор туров в Турцию, Египет, ОАЭ, морские круизы. Поддержка 24/7.',
+    'Турагентство Велес Вояж (РТА 0035678): подбор туров в Турцию, Египет, ОАЭ, морские круизы. Индивидуальные маршруты, поддержка 24/7, лучшие цены.',
   url: SITE_URL,
   type: 'website',
   keywords: [
