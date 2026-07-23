@@ -10,6 +10,25 @@ import {
 } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 
+// Custom heading components for MDX
+export const H1: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = '', ...props }) => (
+    <h1 className={`text-4xl md:text-5xl font-extrabold mb-6 text-gray-900 dark:text-white ${className}`} {...props}>
+        {children}
+    </h1>
+);
+
+export const H2: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = '', ...props }) => (
+    <h2 className={`text-3xl font-extrabold mb-4 text-gray-900 dark:text-white ${className}`} {...props}>
+        {children}
+    </h2>
+);
+
+export const H3: React.FC<React.HTMLAttributes<HTMLHeadingElement>> = ({ children, className = '', ...props }) => (
+    <h3 className={`text-2xl font-bold mb-3 text-gray-900 dark:text-white ${className}`} {...props}>
+        {children}
+    </h3>
+);
+
 interface InfoBlockProps {
     type?: 'info' | 'tip' | 'warning' | 'success';
     title?: string;

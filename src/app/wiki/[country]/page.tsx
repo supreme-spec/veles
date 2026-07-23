@@ -17,6 +17,9 @@ import {
   StepItem,
   WikiHero,
   MdxImage,
+  H1,
+  H2,
+  H3,
 } from '@/components/mdx/MdxComponents';
 import { countryNamesDictionary } from '@/shared/data/country-names-dictionary';
 import { generateCountrySEOMetadata } from '@/shared/utils/generateCountrySEOMetadata';
@@ -66,6 +69,12 @@ const components = {
   MdxImage,
   StepList,
   StepItem,
+  H1,
+  H2,
+  H3,
+  h1: H1,
+  h2: H2,
+  h3: H3,
   a: (props: any) => <Link {...props} className="text-blue-600 hover:underline" />,
 };
 
