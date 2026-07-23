@@ -104,24 +104,7 @@ export const StickyMobileBar: React.FC = () => {
         </div>
       )}
 
-      {/* Toggle button - always visible */}
-      {!isExpanded && (
-        <button
-          onClick={() => setIsExpanded(true)}
-          className="absolute -top-20 right-4 w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white rounded-full shadow-lg flex items-center justify-center transition-all hover:scale-110 z-50"
-          aria-label="Показать контакты"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-            className="w-6 h-6"
-            aria-hidden="true"
-          >
-            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-          </svg>
-        </button>
-      )}
+      {/* Toggle button removed */}
     </div>
   );
 };

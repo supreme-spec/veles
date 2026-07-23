@@ -113,7 +113,7 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
   // Don't render image on server to prevent hydration mismatch
   if (!isClient) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
         <div className={`h-48 relative overflow-hidden bg-gradient-to-r ${getGradientClass()}`} />
         <div className="p-6 flex flex-col flex-grow">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
@@ -132,7 +132,7 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
   // Show gradient while loading or if image failed
   if (isLoading || imageError || !photo) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
+      <div className="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
         <div className={`h-48 relative overflow-hidden bg-gradient-to-r ${getGradientClass()}`} />
         <div className="p-6 flex flex-col flex-grow">
           <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{title}</h3>
@@ -149,7 +149,7 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
+    <div className="bg-gray-50 dark:bg-gray-800 rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 flex flex-col h-full">
       <div className={`h-48 relative overflow-hidden bg-gradient-to-r ${getGradientClass()}`}>
         {photo.url.includes('unsplash.com') ? (
           // Use img tag for Unsplash images to avoid optimization issues
