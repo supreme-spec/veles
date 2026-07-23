@@ -22,6 +22,15 @@ const fallbackImages: Record<string, string> = {
   extreme: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop&auto=format',
   oceania: 'https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?w=600&h=400&fit=crop&auto=format',
   'south-america': 'https://images.unsplash.com/photo-1539053447282-6f32f2bddfed?w=600&h=400&fit=crop&auto=format',
+  // Specific countries
+  turkey: 'https://images.unsplash.com/photo-1541867329-024aafd2e546?w=600&h=400&fit=crop&auto=format',
+  egypt: 'https://images.unsplash.com/photo-1566125882500-54c2e76ceae7?w=600&h=400&fit=crop&auto=format',
+  uae: 'https://images.unsplash.com/photo-1512453979798-5ea266f8880c?w=600&h=400&fit=crop&auto=format',
+  thailand: 'https://images.unsplash.com/photo-1528183429303-0b2e8e90e3d8?w=600&h=400&fit=crop&auto=format',
+  maldives: 'https://images.unsplash.com/photo-1514282401047-d79a71a590e8?w=600&h=400&fit=crop&auto=format',
+  greece: 'https://images.unsplash.com/photo-1570077188677-4a4c26d44f09?w=600&h=400&fit=crop&auto=format',
+  'sri-lanka': 'https://images.unsplash.com/photo-1588258596535-2498cdb08303?w=600&h=400&fit=crop&auto=format',
+  vietnam: 'https://images.unsplash.com/photo-1528183429303-0b2e8e90e3d8?w=600&h=400&fit=crop&auto=format',
 };
 
 export default function TourCard({ id, title, description, imageAlt }: TourCardProps) {
@@ -51,6 +60,14 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
             extreme: 'Горы',
             oceania: 'Океания',
             'south-america': 'Южная Америка',
+            turkey: 'Турция',
+            egypt: 'Египет',
+            uae: 'ОАЭ',
+            thailand: 'Таиланд',
+            maldives: 'Мальдивы',
+            greece: 'Греция',
+            'sri-lanka': 'Шри-Ланка',
+            vietnam: 'Вьетнам',
           };
           setPhoto({
             url: fallbackImages[id] || fallbackImages.europe || '',
@@ -71,6 +88,14 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
           extreme: 'Горы',
           oceania: 'Океания',
           'south-america': 'Южная Америка',
+          turkey: 'Турция',
+          egypt: 'Египет',
+          uae: 'ОАЭ',
+          thailand: 'Таиланд',
+          maldives: 'Мальдивы',
+          greece: 'Греция',
+          'sri-lanka': 'Шри-Ланка',
+          vietnam: 'Вьетнам',
         };
         setPhoto({
           url: fallbackImages[id] || fallbackImages.europe || '',
@@ -105,6 +130,23 @@ export default function TourCard({ id, title, description, imageAlt }: TourCardP
         return 'from-cyan-500 to-teal-600';
       case 'south-america':
         return 'from-emerald-500 to-lime-600';
+      // Specific countries
+      case 'turkey':
+        return 'from-blue-400 to-cyan-600';
+      case 'egypt':
+        return 'from-yellow-400 to-orange-600';
+      case 'uae':
+        return 'from-amber-400 to-orange-600';
+      case 'thailand':
+        return 'from-green-400 to-emerald-600';
+      case 'maldives':
+        return 'from-cyan-400 to-blue-600';
+      case 'greece':
+        return 'from-blue-500 to-indigo-600';
+      case 'sri-lanka':
+        return 'from-teal-400 to-green-600';
+      case 'vietnam':
+        return 'from-red-400 to-rose-600';
       default:
         return 'from-gray-400 to-gray-600';
     }
