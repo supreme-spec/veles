@@ -4,6 +4,9 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { compileMDX } from 'next-mdx-remote/rsc';
 import matter from 'gray-matter';
+import rehypeRaw from 'rehype-raw';
+import rehypeSlug from 'rehype-slug';
+import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import {
   InfoBlock,
   FeatureGrid,
@@ -176,7 +179,16 @@ async function getCountryContent(country: string) {
       const strippedContent = rawContent.replace(/<div id="faq"[\s\S]*?(?=<hr|$)/, '');
       const { content: compiledContent } = await compileMDX({
         source: strippedContent,
-        options: { parseFrontmatter: false },
+        options: { 
+          parseFrontmatter: false,
+          mdxOptions: {
+            rehypePlugins: [
+              rehypeRaw,
+              rehypeSlug,
+              [rehypeAutolinkHeadings, { behavior: 'wrap' }],
+            ],
+          },
+        },
         components,
       });
       return { frontmatter, content: compiledContent };
